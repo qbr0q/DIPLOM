@@ -1,0 +1,45 @@
+.team{
+    margin: 82px 15% 15px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 23px;
+}
+
+.team h1{
+    margin-bottom: 20px;
+}
+
+.matrosov, .mazikov{
+    display: flex;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    align-items: center;
+    gap: 40px
+}
+
+.matrosov img{
+    height: 300px;
+}
+
+.mazikov img{
+    height: 333px;
+}
+
+@media screen and (max-width: 900px){
+    .team{
+        margin: 150px 25% 15px;
+        width: 100%;
+    }
+
+    .matrosov, .mazikov{
+        flex-direction: column;
+    }
+
+    .matrosov img{
+        height: 250px;
+    }
+    
+    .mazikov img{
+        height: 283px;
+    }
+}

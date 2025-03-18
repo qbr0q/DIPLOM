@@ -1,0 +1,81 @@
+.contacts{
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    width: 50%;
+    margin-left: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.contacts{margin-top: 100px;}
+
+.contacts h1{
+    margin-bottom: 20px;
+}
+
+.mskPhone, .rfPhone{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.mskPhone a, .rfPhone a{
+    text-decoration: none;
+    color: black
+}
+
+.theme, .phoneMail, .question{
+    width: 100%;
+}
+
+.theme p, .phoneMail p, .question p{
+    font-size: 14px;
+}
+
+.theme input, .phoneMail input, .question textarea{
+    width: 95%;
+    height: 30px;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.question textarea{
+    resize: none;
+    width: 95.5%;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.question .counter{
+    display: flex;
+    justify-content: end;
+    margin-right: 21px;
+    margin-bottom: 20px;
+}
+
+.sumbitBtn{
+    background-color: var(--green-color);
+    color: white;
+    width: 330px;
+    height: 40px;
+    border: 0px;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: .3s;
+}
+
+.sumbitBtn:hover{
+    background-color: rgb(22, 192, 152);
+    cursor: pointer;
+}
+
+@media (max-width: 768px){
+    .contacts{
+        margin-top: 150px;
+        width: 100%;
+    }
+}

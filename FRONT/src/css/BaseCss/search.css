@@ -1,0 +1,129 @@
+.search{
+    display: flex;
+    align-items: center;
+    width: 705px;
+    justify-content: space-between;
+    margin-left: 140px;
+}
+
+/* выбор профессии */
+
+.jobs, .regions {
+    position: absolute;
+    white-space: pre-line;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-top: 4px
+}
+
+.jobs li, .products li, .regions li {
+    list-style-type: none;
+    padding: 10px;
+    background-color: rgb(218, 221, 225);
+    font-size: 18px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.jobs li{width: 262px; font-size: 15px;}
+
+.jobs li:hover, .products li:hover, .regions li:hover{
+    background-color: rgb(201, 201, 201);
+    transition: .2s;
+}
+
+.searchJobInput{
+    width: 285px;
+    padding-left: 10px;
+    font-size: 15px;
+    border: 0;
+    height: 41px;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+/* выбор продукта */
+
+.productBtn {
+    width: 150px;
+    font-size: 15px;
+    background-color: white;
+    border: none;
+    height: 43px;
+  }
+  
+  .products {
+    position: absolute;
+    padding-left: 0;
+    width: 150px;
+    margin-top: 5px;
+  }
+
+.products li{
+    font-size: 15px;
+}
+
+.productBtn:hover, .searchBtn:hover{
+    background-color: rgb(226, 225, 225);
+    cursor: pointer;
+}
+
+/* выбор региона */
+
+.searchRegionInput{
+    font-size: 15px;
+    background-color: white;
+    border: none;
+    height: 41px;
+    width: 140px;
+    padding-left: 10px;
+}
+
+.regions li{width: 143px;}
+
+/* кнопка поиска */
+
+.searchBtn{
+    font-size: 15px;
+    background-color: white;
+    border: none;
+    height: 43px;
+    width: 100px;
+    font-weight: bold;
+    color: rgb(4, 177, 110);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: .2s;
+}
+
+.searchBtn:hover{
+    background-color: rgb(4, 177, 110);
+    color: white;
+    transition: .2s;
+}
+
+@media (max-width: 768px) {
+    .search {
+      margin-left: -135px;
+      margin-right: -165px;
+      margin-top: 17%;
+    }
+  
+    .searchJobInput {
+      width: 213px;
+    }
+  
+    .productBtn {
+      width: 133px;
+      color: black
+    }
+  
+    .searchRegionInput {
+      width: 123px;
+    }
+  
+    .searchBtn {
+      width: 150%;
+    }
+  }

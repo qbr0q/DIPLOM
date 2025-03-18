@@ -1,0 +1,103 @@
+.profile{
+    background-color: white;
+    margin-top: 90px;
+    width: 50%;
+    border-radius: 10px;
+    margin-left: 25%;
+    padding: 20px;
+}
+
+.ava{
+    height: 200px;
+}
+
+.bioContainer{
+    display: flex;
+    gap: 55px;
+    margin-bottom: 15px;
+}
+
+.mobileBioContainer{
+    display: flex;
+}
+
+.personalInfo{
+    margin-top: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+.personalInfo h3, h4{
+    font-weight: 100;
+}
+
+.city{
+    margin-bottom: 15px;
+}
+
+.socLink{
+    height: 40px;
+    transition: .2s;
+}
+
+.socLink:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+    transition: .2s;
+}
+
+.socLinks{
+    width: 100px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.position{
+    margin-bottom: 10px;
+}
+
+.workExperience{
+    font-weight: 100;
+    margin-bottom: 30px;
+    font-size: 20px;
+}
+
+.education, .skills{
+    margin-bottom: 20px;
+}
+
+.projects h3{
+    margin-bottom: 10px;
+}
+
+.project{
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+.project h4{
+    font-weight: 600;
+}
+
+@media (max-width: 768px){
+    .profile{
+        width: 100%;
+        margin-top: 150px;
+        margin-bottom: 30px;
+    }
+
+    .mobileBioContainer{
+        display: block;
+    }
+
+    .socLinks{
+        width: 120px;
+        justify-content: space-around;
+    }
+
+    .personalInfo{
+        margin-bottom: 10px;
+    }
+}

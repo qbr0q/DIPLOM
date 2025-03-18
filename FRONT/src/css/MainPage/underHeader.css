@@ -1,0 +1,68 @@
+.underHeader {
+    background: linear-gradient(90deg, rgba(77,120,191,1) 0%, rgba(3,168,137,1) 100%, rgba(241,241,241,1) 100%, rgba(241,241,241,1) 100%);
+    display: flex;
+    justify-content: space-around;
+    height: 250px;
+}
+
+.post_resume, .post_vacancy{
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+}
+
+.post_resume h2, .post_vacancy h2{
+    padding: 18px;
+}
+
+.post_resume h5, .post_vacancy h5{
+    white-space: nowrap;
+    line-height: 22px;
+    font-weight: 100;
+    font-size: 15px;
+}
+
+.post_resume button, .post_vacancy button{
+    width: 200px;
+    font-size: 15px;
+    margin-top: 20px;
+    height: 43px;
+    border: 1px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.post_resume button:hover, .post_vacancy button:hover{
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .underHeader {
+      flex-direction: column; 
+      height: auto; 
+      width: 160%;
+      margin-top: 125px;
+    }
+  
+    .post_resume,
+    .post_vacancy {
+      width: 100%; 
+      margin-bottom: 20px; 
+    }
+  
+    .post_resume h2,
+    .post_vacancy h2 {
+      padding: 10px; 
+    }
+  
+    .post_resume h5,
+    .post_vacancy h5 {
+      font-size: 14px; 
+    }
+    .post_resume button, .post_vacancy button{
+      color: black
+  }
+  }

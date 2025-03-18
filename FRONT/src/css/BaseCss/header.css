@@ -1,0 +1,44 @@
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color .3s ease;
+    z-index: 100;
+}
+
+/* логотип */
+
+.logo_img{
+    position: absolute;
+    margin-left: 80px;
+    margin-top: 4px;
+}
+
+.logo_img img{
+    height: 30px;
+}
+
+.mobileMenuLogo{
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    header {
+      margin-top: -50px;
+    }
+  
+    .logo_img {
+      margin-left: 0;
+      position: relative;
+    }
+  
+    .logo_img img {
+      height: 24px;
+    }
+  }
