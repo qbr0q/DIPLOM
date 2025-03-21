@@ -1,3 +1,5 @@
+const BACKEND_URL = "http://localhost:8080"
+
 const professions = [
  'Event-менеджер',
  'PR-менеджер',
@@ -705,5 +707,6 @@ module.exports = {
     regions,
     vacancyList,
     vacanciesDetailsList,
-    companiesInfo
+    companiesInfo,
+    BACKEND_URL
   };

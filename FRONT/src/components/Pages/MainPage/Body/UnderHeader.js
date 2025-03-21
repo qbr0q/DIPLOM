@@ -4,6 +4,7 @@ import '../../../../css/MainPage/underHeader.css'
 class UnderHeader extends React.Component {
     render() {
       return (
+      <>
         <div className='underHeader'>
             <div className='post_resume'>
                 <h2>Работа</h2>
@@ -22,6 +23,8 @@ class UnderHeader extends React.Component {
                 </span>
             </div>
         </div>
+        <span className="stripe"></span>
+      </>
       );
     }
   }
