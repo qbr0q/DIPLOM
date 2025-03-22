@@ -3,6 +3,7 @@ from sqlmodel import (SQLModel, Field,
 from sqlalchemy import JSON
 from datetime import datetime
 from typing import List
+from pydantic import BaseModel
 
 
 class Company(SQLModel, table=True):
@@ -60,6 +61,16 @@ class Currency(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     currencyName: str
     currencySymbol: str
+
+
+class VacancyCard(BaseModel):
+    id: int
+    createDate: datetime
+    position: str
+    salary: float
+    isCalling: bool
+    name: str
+    region: str
 
 
 engine = create_engine("mysql+pymysql://dbuser:dbpassword@localhost:3306/dpmdb")
