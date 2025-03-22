@@ -1,46 +1,56 @@
 import React  from 'react';
 import { Link } from 'react-router-dom';
+import {useState, useEffect} from 'react';
 import '../../../../css/MainPage/vacancies.css'
+import {BACKEND_URL} from '../../../appContans'
 
-const Vacancies = (filtredVacancyList) => {
+const Vacancies = () => {
 
-  const filter = localStorage.getItem('vacancyFilter')
-  const vacancyList = require('../../../appContans').vacancyList
-  let sortedVacancyList = filter ? filter === 'Все вакансии' ? shuffle(vacancyList) : filtredVacancyList['vacancyList']
-  : shuffle(vacancyList)
+    const [vacancyList, setVacancyList] = useState([])
+    const [vacancyListLoading, setVacancyListLoading] = useState(true)
 
-  function shuffle(array) {
-    let currentIndex = array.length;
-    let temporaryValue, randomIndex;
-    while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+    useEffect(() => {
+        fetch(BACKEND_URL + '/allVacancy')
+        .then(response => response.json())
+        .then(data => {setVacancyList(data);
+              setVacancyListLoading(false)})
+    }, [])
+
+    if (vacancyListLoading) {
+        return <div>Загрузка...</div>;
     }
-    return array;
-}
 
     return (
       <div className='vacancies'>
-        {sortedVacancyList.map((list, listIndex) => (
-          <div key={listIndex} className='vacancyContainer'>
-            {Object.entries(list['vacancyInformation']).map(([key, value], entryIndex) => (
-              <span key={entryIndex} className={key}>
-                {key === 'work' ?
-                <Link to={`/vacancy/${list.config.id}`}
-                state={{vacancyInfo: list}}>{value}</Link> :
-                value}
-              </span>
-            ))}
-            <div className='btns'>
-              <button className='respondBtn'>Откликнуться</button>
-              {(list['config']['is_calling']) ? 
-              <button className='callBtn'>Позвонить</button> : null}
-           </div>
-          </div>  
-        ))}
+        {
+            Object.values(vacancyList).map((data, index) => (
+                <div className='vacancyContainer' key={index}>
+                    <span className="time">
+                        {data.createDate}
+                    </span>
+                    <span className="work">
+                        <Link to={`/vacancy/${data.id}`}>
+                            {data.position}
+                        </Link>
+                    </span>
+                    <span className="salary">
+                        {data.salary}
+                    </span>
+                    <span className="company">
+                        {data.name}
+                    </span>
+                    <span className="city">
+                        {data.region}
+                    </span>
+
+                <div className='btns'>
+                    <button className='respondBtn'>Откликнуться</button>
+                    {data.isCalling ?
+                    <button className='callBtn'>Позвонить</button> : null}
+                </div>
+                </div>
+            ))
+        }
       </div>
     );
   };
