@@ -68,9 +68,11 @@ class VacancyCard(BaseModel):
     createDate: datetime
     position: str
     salary: float
+    duration: str
     isCalling: bool
     name: str
     region: str
+    currencySymbol: str
 
 
 engine = create_engine("mysql+pymysql://dbuser:dbpassword@localhost:3306/dpmdb")
