@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from sqlmodel import Session, select, and_
-from datetime import datetime
+from sqlmodel import Session
 
 from config import HOST, PORT
 from db.models import *
+from db.sql import *
 
 
 app = FastAPI()
@@ -19,37 +19,22 @@ app.add_middleware(
     )
 
 
-@app.get('/allVacancy', response_model=list[VacancyCard])
+@app.get('/allVacancy', response_model=list[VacancyCardSchema])
 async def get_all_vacancy():
     with Session(engine) as session:
-        query = select(
-            Vacancy.id,
-            Vacancy.createDate,
-            Vacancy.position,
-            Vacancy.salary,
-            Vacancy.duration,
-            Vacancy.isCalling,
-            Company.name,
-            Company.region,
-            Currency.currencySymbol
-        ).join(
-            Company
-        ).join(
-            Currency, Currency.currencyName == Vacancy.currency
-        ).where(
-            and_(Vacancy.deleted == False, Company.deleted == False)
-        ).order_by(
-            Vacancy.createDate
-        )
-        all_vacancy = session.exec(query).all()
+        records = session.execute(ALL_VACANCY_STMT)
+        all_vacancy = records.fetchall()
     return all_vacancy
 
 
-
-@app.get('/vacancy/{vacancyId}')
+@app.get('/vacancy/{vacancy_id}', response_model=VacancyInfoSchema)
 async def getVacancyInfo(vacancy_id: int):
     with Session(engine) as session:
-        vacancy_info = session.get(Vacancy, vacancy_id)
+        record = session.execute(
+            VACANCY_INFO_STMT,
+            {"vacancy_id": vacancy_id}
+        )
+        vacancy_info = record.fetchone()
     return vacancy_info
 
 
