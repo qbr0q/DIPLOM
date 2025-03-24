@@ -13,7 +13,7 @@ const Routers = createBrowserRouter([
       element: <MainPage/>
     },
     {
-      path: "/vacancy/:id",
+      path: "/vacancy/:vacancyId",
       element: <VacancyDetails/>
     },
     {
