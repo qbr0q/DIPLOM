@@ -13,15 +13,14 @@ class HeaderBtns extends React.Component {
             <label htmlFor='helpIcon'>Помощь</label>
           </Link>
             <div className='AuthDropdown'>
-              <Link className='AuthBtn' to={"/account/auth"}>
-                <img src={authIcon} id='authIcon' alt='иконка личного кабинета'/>
-                <label htmlFor='authIcon'>Личный кабинет</label>
+              <Link className='AccountBtn' to={"/account/auth"}>
+                <img src={authIcon} id='accountIcon' alt='иконка личного кабинета'/>
+                <label htmlFor='accountIcon'>Личный кабинет</label>
               </Link>
 
               <div className="DropdownMenu">
-                <Link to="/account/profile">Профиль</Link>
-                <Link to="/account/settings">Настройки</Link>
-                <Link to="/account/logout">Выйти</Link>
+                <Link to="/account/profile">Войти</Link>
+                <Link to="/account/settings">Зарегистрироваться</Link>
               </div>
             </div>
         </div>
