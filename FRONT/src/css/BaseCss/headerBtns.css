@@ -1,0 +1,66 @@
+#authIcon{
+    height: 25px;
+    width: 25px;
+}
+
+#helpIcon{
+    height: 31px;
+    width: 31px;
+}
+
+.HelpBtn, .AuthBtn, .RegisterBtn{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+}
+
+.HelpBtn{gap: 8px}
+
+.AuthBtn{gap: 10px}
+
+.RegisterBtn{gap: 10px}
+
+.HelpBtn label, .AuthBtn label, .RegisterBtn label{
+    cursor: pointer;
+}
+
+.HeaderBtns{
+    display: flex;
+    margin-right: 50px;
+    justify-content: space-between;
+    gap: 25px;
+    align-items: center;
+}
+
+.AuthDropdown{
+    display: flex;
+    flex-direction: column;
+    margin-top: 60px
+}
+
+.DropdownMenu{
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    transition:
+        opacity 0.2s ease-in,
+        visibility 0.2s ease-in,
+        transform 0.2s ease-in;
+}
+
+.AuthBtn:hover + .DropdownMenu{
+    visibility: visible;
+      transition:
+    opacity 0.2s ease-out,
+    visibility 0.2s ease-out,
+    transform 0.2s ease-out;
+
+}
+
+@media (max-width: 768px) {
+    .HeaderBtns {
+        gap: 20px;
+    }
+  }
