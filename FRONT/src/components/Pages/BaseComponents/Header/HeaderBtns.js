@@ -19,8 +19,8 @@ class HeaderBtns extends React.Component {
               </Link>
 
               <div className="DropdownMenu">
-                <Link to="/account/profile">Войти</Link>
-                <Link to="/account/settings">Зарегистрироваться</Link>
+                <Link to="/account/login">Войти</Link>
+                <Link to="/account/signup">Зарегистрироваться</Link>
               </div>
             </div>
         </div>

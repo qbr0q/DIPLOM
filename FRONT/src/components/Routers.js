@@ -6,6 +6,7 @@ import Account from './Pages/AccountPage/Auth/Account';
 import Help from './Pages/HelpPage/Help'
 import Profile from './Pages/AccountPage/Profile/Profile'
 import ErrorPath from "./Pages/ErrorPage/ErrorPath";
+import SignUp from "./Pages/SignUpPage/SignUp";
 
 const Routers = createBrowserRouter([
     {
@@ -31,6 +32,10 @@ const Routers = createBrowserRouter([
     {
       path: '/help',
       element: <Help/>
+    },
+    {
+      path: '/account/signup',
+      element: <SignUp/>
     },
     {
       path: '*',
