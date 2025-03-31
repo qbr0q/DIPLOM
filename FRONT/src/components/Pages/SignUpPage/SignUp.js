@@ -1,90 +1,121 @@
 import {React, useState} from 'react';
 import Header from '../BaseComponents/Header/Header';
 import Footer from '../BaseComponents/Footer/Footer';
+import '../../../css/Account/signup.css'
+import {BACKEND_URL} from '../../appContans'
 
 const SignUp = () => {
+    const [activeForm, setActiveForm] = useState("formCandidate");
 
-  const [activeForm, setActiveForm] = useState('form1'); // 'form1' или 'form2'
+    function handleSubmit(event) {
+        event.preventDefault()
 
-  const handleSubmitForm1 = (e) => {
-    e.preventDefault();
-    alert('Форма 1 отправлена!');
-  };
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData);
+        const role = activeForm === "formCandidate" ? "candidate" : "company"
+        console.log(data)
 
-  const handleSubmitForm2 = (e) => {
-    e.preventDefault();
-    alert('Форма 2 отправлена!');
-  };
+         fetch(BACKEND_URL + '/account/signUp', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "X-User-Role": role
+            },
+            body: JSON.stringify(data)
+         })
+    }
 
-  return (
-    <>
-        <Header/>
-               <div style={{ maxWidth: '400px', margin: '20px auto' }}>
-      {/* Переключатель */}
-      <div style={{ display: 'flex', marginBottom: '20px' }}>
+  return (<>
+  <Header/>
+    <div className="form-container">
+      <div className="switcher">
         <button
-          onClick={() => setActiveForm('form1')}
-          style={{
-            padding: '10px',
-            background: activeForm === 'form1' ? '#4CAF50' : '#ddd',
-            border: 'none',
-            cursor: 'pointer',
-          }}
+          className={`switch-btn ${activeForm === 'formCandidate' ? 'active' : ''}`}
+          onClick={() => setActiveForm('formCandidate')}
         >
-          Форма 1
+          Ищу работу
         </button>
         <button
-          onClick={() => setActiveForm('form2')}
-          style={{
-            padding: '10px',
-            background: activeForm === 'form2' ? '#4CAF50' : '#ddd',
-            border: 'none',
-            cursor: 'pointer',
-          }}
+          className={`switch-btn ${activeForm === 'formVacancy' ? 'active' : ''}`}
+          onClick={() => setActiveForm('formVacancy')}
         >
-          Форма 2
+          Ищу работников
         </button>
       </div>
 
-      {/* Форма 1 */}
-      {activeForm === 'form1' && (
-        <form onSubmit={handleSubmitForm1} style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '5px' }}>
-          <h3>Форма 1</h3>
-          <div style={{ marginBottom: '10px' }}>
-            <label>Имя:</label>
-            <input type="text" required style={{ width: '100%', padding: '8px' }} />
+      <div className="forms-wrapper">
+        <form className={`form ${activeForm === 'formCandidate' ? 'active-form' : 'inactive-form'}`}
+         onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Имя</label>
+            <input type="text" name="firstName" disabled={activeForm !== 'formCandidate'} />
           </div>
-          <div style={{ marginBottom: '10px' }}>
-            <label>Email:</label>
-            <input type="email" required style={{ width: '100%', padding: '8px' }} />
+          <div className="form-group">
+            <label>Фамилия</label>
+            <input type="text" name="lastName" disabled={activeForm !== 'formCandidate'} />
           </div>
-          <button type="submit" style={{ padding: '10px 15px', background: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}>
-            Отправить
-          </button>
-        </form>
-      )}
+          <div className="form-group">
+            <label>Отчество</label>
+            <input type="text" name="patronymic" disabled={activeForm !== 'formCandidate'} />
+          </div>
+          <div className="form-group">
+            <label>Пароль</label>
+            <input type="password" name="password" disabled={activeForm !== 'formCandidate'} />
+          </div>
+          <div className="form-group">
+            <label>Профессия</label>
+            <input type="text" name="job" disabled={activeForm !== 'formCandidate'} />
+          </div>
+          <div className="form-group">
+            <label>Опыт работы</label>
+            <input type="text" name="workExperience" disabled={activeForm !== 'formCandidate'} />
+          </div>
+          <div className="form-group">
+            <label>Номер телефона</label>
+            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
+          </div>
 
-      {/* Форма 2 */}
-      {activeForm === 'form2' && (
-        <form onSubmit={handleSubmitForm2} style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '5px' }}>
-          <h3>Форма 2</h3>
-          <div style={{ marginBottom: '10px' }}>
-            <label>Телефон:</label>
-            <input type="tel" required style={{ width: '100%', padding: '8px' }} />
-          </div>
-          <div style={{ marginBottom: '10px' }}>
-            <label>Адрес:</label>
-            <textarea required style={{ width: '100%', padding: '8px' }} />
-          </div>
-          <button type="submit" style={{ padding: '10px 15px', background: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}>
-            Отправить
-          </button>
+          <button className="signUpBtn" type="sumbit">Регистрация</button>
         </form>
-      )}
+
+        <div className="divider"></div>
+
+        <form className={`form ${activeForm === 'formVacancy' ? 'active-form' : 'inactive-form'}`}
+         onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Название компании</label>
+            <input type="text" name='name' disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Пароль</label>
+            <input type="password" name='password' disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Почта</label>
+            <input type="text" name='mail' disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Сфера деятельности</label>
+            <input type="text" disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Регион</label>
+            <input name='region' type="text" disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Юр. Адрес</label>
+            <input name='address' type="text" disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Описание компании</label>
+            <textarea name='description' disabled={activeForm !== 'formVacancy'} />
+          </div>
+
+          <button className="signUpBtn" type="sumbit">Регистрация</button>
+        </form>
+      </div>
     </div>
-  );
-};
-        <Footer/>
+    <Footer/>
     </>
   );
 }
