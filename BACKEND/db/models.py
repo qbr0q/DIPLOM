@@ -3,18 +3,28 @@ from sqlmodel import (SQLModel, Field,
 from sqlalchemy import JSON, String
 from datetime import datetime
 from typing import List
-from pydantic import BaseModel, field_validator
-import json
 
 
 class Company(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     name: str
+    password: str = Field(sa_type=String(64))
     region: str
     description: str
     address: str
     deleted: bool = Field(default=False)
     vacancies: List['Vacancy'] = Relationship(back_populates='company')
+
+
+class Candidate(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    firstName: str
+    lastName: str
+    patronymic: str
+    password: str = Field(sa_type=String(64))
+    job: str
+    workExperience: str
+    phone: str
 
 
 class Vacancy(SQLModel, table=True):
@@ -62,37 +72,6 @@ class Currency(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     currencyName: str
     currencySymbol: str
-
-
-class VacancyCardSchema(BaseModel):
-    id: int
-    createDate: datetime
-    position: str
-    salary: float
-    duration: str
-    isCalling: bool
-    name: str
-    region: str
-    currencySymbol: str
-
-
-class VacancyInfoSchema(BaseModel):
-    position: str
-    jobDescription: str
-    salary: float
-    currencySymbol: str
-    duration: str
-    jobDuties: List[str]
-    candidateRequirements: List[str]
-    isCalling: bool
-    companyName: str
-    companyDescription: str
-    companyAddress: str
-
-    @field_validator("jobDuties", "candidateRequirements", mode="before")
-    @classmethod
-    def parse_json_field(cls, v):
-        return json.loads(v)
 
 
 engine = create_engine("mysql+pymysql://dbuser:dbpassword@localhost:3306/dpmdb")
