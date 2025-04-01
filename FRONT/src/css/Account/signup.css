@@ -81,5 +81,6 @@
 
 .form-group textarea {
     width: 85%;
+    min-width: 85%;
     font-size: 15px;
 }

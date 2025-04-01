@@ -44,18 +44,19 @@ async def getVacancyInfo(vacancy_id: int, session: Session = Depends(get_session
     return vacancy_info
 
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
 @app.post('/account/signUp')
 async def signUpUser(data: dict,
                      session: Session = Depends(get_session),
                      role: str = Header(None, alias="X-User-Role")):
-    if isinstance(data, Candidate):
-        session.add(data)
-    elif isinstance(data, Company):
-        session.add(data)
+    if role == 'candidate':
+        dataDB = Candidate(**data)
+    elif role == 'company':
+        dataDB = Company(**data)
+    session.add(dataDB)
     session.commit()
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
 
 if __name__ == "__main__":

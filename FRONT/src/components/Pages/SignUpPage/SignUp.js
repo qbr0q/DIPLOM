@@ -67,7 +67,7 @@ const SignUp = () => {
           </div>
           <div className="form-group">
             <label>Почта</label>
-            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
+            <input type="text" name="mail" disabled={activeForm !== 'formCandidate'} />
           </div>
           <div className="form-group">
             <label>Профессия</label>
@@ -95,7 +95,7 @@ const SignUp = () => {
           </div>
           <div className="form-group">
             <label>Номер телефона</label>
-            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
+            <input type="text" name="phone" disabled={activeForm !== 'formVacancy'} />
           </div>
           <div className="form-group">
             <label>Почта</label>
