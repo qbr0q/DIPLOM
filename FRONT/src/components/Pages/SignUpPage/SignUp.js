@@ -13,7 +13,6 @@ const SignUp = () => {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
         const role = activeForm === "formCandidate" ? "candidate" : "company"
-        console.log(data)
 
          fetch(BACKEND_URL + '/account/signUp', {
             method: 'POST',
@@ -63,16 +62,20 @@ const SignUp = () => {
             <input type="password" name="password" disabled={activeForm !== 'formCandidate'} />
           </div>
           <div className="form-group">
+            <label>Номер телефона</label>
+            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
+          </div>
+          <div className="form-group">
+            <label>Почта</label>
+            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
+          </div>
+          <div className="form-group">
             <label>Профессия</label>
             <input type="text" name="job" disabled={activeForm !== 'formCandidate'} />
           </div>
           <div className="form-group">
             <label>Опыт работы</label>
             <input type="text" name="workExperience" disabled={activeForm !== 'formCandidate'} />
-          </div>
-          <div className="form-group">
-            <label>Номер телефона</label>
-            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
           </div>
 
           <button className="signUpBtn" type="sumbit">Регистрация</button>
@@ -89,6 +92,10 @@ const SignUp = () => {
           <div className="form-group">
             <label>Пароль</label>
             <input type="password" name='password' disabled={activeForm !== 'formVacancy'} />
+          </div>
+          <div className="form-group">
+            <label>Номер телефона</label>
+            <input type="text" name="phone" disabled={activeForm !== 'formCandidate'} />
           </div>
           <div className="form-group">
             <label>Почта</label>

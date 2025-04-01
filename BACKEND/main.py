@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Header, Depends
+from fastapi import FastAPI, Header, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from sqlmodel import Session
@@ -48,8 +48,9 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 @app.post('/account/signUp')
-async def signUpUser(data: Union[Company, Candidate],
-                     session: Session = Depends(get_session)):
+async def signUpUser(data: dict,
+                     session: Session = Depends(get_session),
+                     role: str = Header(None, alias="X-User-Role")):
     if isinstance(data, Candidate):
         session.add(data)
     elif isinstance(data, Company):

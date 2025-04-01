@@ -9,9 +9,11 @@ class Company(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     name: str
     password: str = Field(sa_type=String(64))
-    region: str
+    phone: str = Field(default=None)
+    mail: str
+    region: str = Field(default=None)
     description: str
-    address: str
+    address: str = Field(default=None)
     deleted: bool = Field(default=False)
     vacancies: List['Vacancy'] = Relationship(back_populates='company')
 
@@ -20,11 +22,12 @@ class Candidate(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     firstName: str
     lastName: str
-    patronymic: str
+    patronymic: str = Field(default=None)
+    phone: str = Field(default=None)
+    mail: str
     password: str = Field(sa_type=String(64))
-    job: str
-    workExperience: str
-    phone: str
+    job: str = Field(default=None)
+    workExperience: str = Field(default=None)
 
 
 class Vacancy(SQLModel, table=True):
@@ -74,5 +77,5 @@ class Currency(SQLModel, table=True):
     currencySymbol: str
 
 
-engine = create_engine("mysql+pymysql://dbuser:dbpassword@localhost:3306/dpmdb")
+engine = create_engine("mysql+pymysql://dbuser:dbpassword@26.163.65.187:3306/dpmdb")
 SQLModel.metadata.create_all(engine)
