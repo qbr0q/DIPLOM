@@ -1,22 +1,23 @@
-from fastapi import FastAPI, Header, Depends, Request
+from fastapi import FastAPI, Header, Depends, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from sqlmodel import Session
-from passlib.context import CryptContext
-from typing import Union
+from datetime import timedelta
 
-from config import HOST, PORT
+from config import HOST, PORT, security, config
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
+from utils import hash_password
 
 
 app = FastAPI()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def get_session():
     with Session(engine) as session:
         yield session
+
 
 app.add_middleware(
         CORSMiddleware,
@@ -52,11 +53,28 @@ async def signUpUser(data: dict,
         dataDB = Candidate(**data)
     elif role == 'company':
         dataDB = Company(**data)
+    dataDB.password = hash_password(dataDB.password)
     session.add(dataDB)
     session.commit()
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+
+@app.post('/account/login')
+async def loginUser(data: dict,
+                    response: Response,
+                    session: Session = Depends(get_session)):
+    # for table in (Company, Candidate):
+    #     records = session.query(table.id, table.mail, table.phone).all()
+    token = security.create_access_token(uid='test')
+    response.set_cookie(
+        key=config.JWT_ACCESS_COOKIE_NAME,
+        value=token,
+        max_age=60 * 60
+    )
+
+
+@app.get('/test', dependencies=[Depends(security.access_token_required)])
+async def test():
+    return {'key': 'top secret'}
 
 
 if __name__ == "__main__":

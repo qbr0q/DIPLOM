@@ -1,7 +1,9 @@
 import {React, useState} from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../BaseComponents/Header/Header'
 import Footer from '../BaseComponents/Footer/Footer'
-import '../../../css/AccountPage/auth.css'
+import '../../../css/Account/login.css'
+import {BACKEND_URL} from '../../appContans'
 
 const Login = () => {
   const [isClose, setIsClose] = useState(true)
@@ -10,22 +12,39 @@ const Login = () => {
 
   document.title = 'Войти в аккаунт'
 
+   function handleSubmit(event) {
+        event.preventDefault()
+
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData);
+
+        fetch(BACKEND_URL + '/account/login', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+            credentials: "include"
+         })
+    }
+
   return (
     <>
     <Header/>
-    <form className='formAuth'>
+    <form className='formAuth' onSubmit={handleSubmit}>
         <h1 className='h1Auth'>Вход</h1>
         <div className='inputAuth'>
-          <input placeholder='Телефон или почта' type='text' className='login'/>
+          <input placeholder='Телефон или почта' type='text' className='login' name="login"/>
           <div className='passContainer'>
-            <input placeholder='Пароль' type={isClose ? 'password' : 'text'} className='password'/>
+            <input placeholder='Пароль' type={isClose ? 'password' : 'text'} className='password' name="pass"/>
 
           </div>
         </div>
         <div className='btnsAuth'>
           <button className='authBtn'
           type='submit'>Войти</button>
-          <button className='regBtn' type='button'>Зарегистрироваться</button>
+          <button className='regBtn'
+          onClick={() => {window.location.href = '/account/signup'}}>Зарегистрироваться</button>
           <button className='restoreAccessBtn'
           type='button'>Восстановить доступ</button>
         </div>
