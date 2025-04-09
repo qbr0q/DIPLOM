@@ -71,13 +71,15 @@
   margin-bottom: 5px;
 }
 
-.form-group input {
+.form-group input, select {
   width: 80%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 15px;
 }
+
+.form-group select{width: 87%}
 
 .form-group textarea {
     width: 85%;

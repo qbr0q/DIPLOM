@@ -3,25 +3,49 @@ import Header from '../BaseComponents/Header/Header';
 import Footer from '../BaseComponents/Footer/Footer';
 import '../../../css/Account/signup.css'
 import {BACKEND_URL} from '../../appContans'
+import {validationSignUpCandidateForm,
+        validationSignUpCompanyForm} from '../../Utils'
 
 const SignUp = () => {
     const [activeForm, setActiveForm] = useState("formCandidate");
+    let errors = []
 
-    function handleSubmit(event) {
+    function validationForm(formData, role) {
+        if (role === 'candidate') {
+            errors = validationSignUpCandidateForm(formData)
+        } else if (role === 'company') {
+            errors = validationSignUpCompanyForm(formData)
+        }
+
+        return errors.length === 0
+    }
+
+    async function handleSubmit(event) {
         event.preventDefault()
 
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
-        const role = activeForm === "formCandidate" ? "candidate" : "company"
+        const role = activeForm === "formCandidate" ? "candidate" : "company";
 
-         fetch(BACKEND_URL + '/account/signUp', {
+        if (validationForm(data, role)) {
+            const response = await fetch(BACKEND_URL + '/account/signUp', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
                 "X-User-Role": role
             },
             body: JSON.stringify(data)
-         })
+        })
+        const jsonData = await response.json();
+        if (response.ok) {
+            alert(jsonData.message);
+        } else {
+            alert(jsonData.detail);
+        }
+        } else {
+            alert(errors.join('\n'))
+            errors = []
+        }
     }
 
   return (<>
@@ -47,15 +71,21 @@ const SignUp = () => {
          onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Имя</label>
-            <input type="text" name="firstName" disabled={activeForm !== 'formCandidate'} />
+            <input type="text" name="firstName" disabled={activeForm !== 'formCandidate'}
+            maxLength="20"
+            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '')}} />
           </div>
           <div className="form-group">
             <label>Фамилия</label>
-            <input type="text" name="lastName" disabled={activeForm !== 'formCandidate'} />
+            <input type="text" name="lastName" disabled={activeForm !== 'formCandidate'}
+            maxLength="20"
+            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '')}} />
           </div>
           <div className="form-group">
             <label>Отчество</label>
-            <input type="text" name="patronymic" disabled={activeForm !== 'formCandidate'} />
+            <input type="text" name="patronymic" disabled={activeForm !== 'formCandidate'}
+            maxLength="20"
+            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '')}} />
           </div>
           <div className="form-group">
             <label>Пароль</label>
@@ -75,7 +105,12 @@ const SignUp = () => {
           </div>
           <div className="form-group">
             <label>Опыт работы</label>
-            <input type="text" name="workExperience" disabled={activeForm !== 'formCandidate'} />
+            <select id="test" name="workExperience" disabled={activeForm !== 'formCandidate'}>
+                <option value="Нет опыта">Нет опыта</option>
+                <option value="1-3 года">1-3 года</option>
+                <option value="3-6 года">3-6 года</option>
+                <option value="Больше 6 лет">Больше 6 лет</option>
+            </select>
           </div>
 
           <button className="signUpBtn" type="sumbit">Регистрация</button>
@@ -87,7 +122,9 @@ const SignUp = () => {
          onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Название компании</label>
-            <input type="text" name='name' disabled={activeForm !== 'formVacancy'} />
+            <input type="text" name='name' disabled={activeForm !== 'formVacancy'}
+            maxLength="20"
+            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s-]/g, '')}} />
           </div>
           <div className="form-group">
             <label>Пароль</label>
@@ -95,11 +132,11 @@ const SignUp = () => {
           </div>
           <div className="form-group">
             <label>Номер телефона</label>
-            <input type="text" name="phone" disabled={activeForm !== 'formVacancy'} />
+            <input type="phone" name="phone" disabled={activeForm !== 'formVacancy'} />
           </div>
           <div className="form-group">
             <label>Почта</label>
-            <input type="text" name='mail' disabled={activeForm !== 'formVacancy'} />
+            <input type="mail" name='mail' disabled={activeForm !== 'formVacancy'} />
           </div>
           <div className="form-group">
             <label>Сфера деятельности</label>
@@ -115,7 +152,9 @@ const SignUp = () => {
           </div>
           <div className="form-group">
             <label>Описание компании</label>
-            <textarea name='description' disabled={activeForm !== 'formVacancy'} />
+            <textarea name='description' disabled={activeForm !== 'formVacancy'}
+            maxLength="400"
+            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s.,!?()\-]/g, '')}} />
           </div>
 
           <button className="signUpBtn" type="sumbit">Регистрация</button>

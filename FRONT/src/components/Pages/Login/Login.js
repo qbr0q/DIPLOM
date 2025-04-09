@@ -12,20 +12,26 @@ const Login = () => {
 
   document.title = 'Войти в аккаунт'
 
-   function handleSubmit(event) {
+  async function handleSubmit(event) {
         event.preventDefault()
 
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
 
-        fetch(BACKEND_URL + '/account/login', {
+        const response = await fetch(BACKEND_URL + '/account/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(data),
             credentials: "include"
-         })
+        })
+        const jsonData = await response.json();
+        if (response.ok) {
+            alert(jsonData.message);
+        } else {
+            alert(jsonData.detail);
+        }
     }
 
   return (
