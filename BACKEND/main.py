@@ -3,6 +3,7 @@ from fastapi import (FastAPI, Header, Depends,
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from sqlmodel import Session
+from authx.schema import TokenPayload
 
 from config import HOST, PORT, security, config
 from db.models import *
@@ -78,13 +79,33 @@ async def loginUser(data: dict,
         if not verify_password(password, user.password):
             raise HTTPException(status_code=401, detail="Неверный пароль")
 
-    token = security.create_access_token(uid=str(user.id))
+    token = security.create_access_token(
+        str(user.id),
+        data={
+            'uid': str(user.id),
+            'role': user.__class__.__tablename__
+        }
+    )
     response.set_cookie(
         key=config.JWT_ACCESS_COOKIE_NAME,
         value=token,
-        max_age=60 * 60
+        expires=60 * 60
     )
     return {'message': 'Успешный вход'}
+
+
+@app.get('/getRole')
+def get_role(request: Request):
+    token = request.cookies.get("access_token")
+    payload = TokenPayload.decode(token, config.JWT_SECRET_KEY)
+    role = payload.model_extra['role']
+    return role
+
+
+@app.get('/allCandidates')
+def getAllCandidates(session: Session = Depends(get_session)):
+    candidates = session.query(Candidate).all()
+    return candidates
 
 
 @app.get('/test', dependencies=[Depends(security.access_token_required)])

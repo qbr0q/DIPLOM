@@ -51,7 +51,7 @@
     transition: opacity 0.3s ease-in-out;
 }
 
-.DropdownMenu a{
+.DropdownMenu a, .DropdownMenu span{
     text-decoration: none;
     color: white;
     padding: 10px;
@@ -59,6 +59,10 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 7px;
     transition: opacity 0.1s, transform 0.1s;
+}
+
+.DropdownMenu span{
+    cursor: pointer
 }
 
 .AccountBtn:hover + .DropdownMenu,

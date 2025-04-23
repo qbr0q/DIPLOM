@@ -1,6 +1,5 @@
-import React  from 'react';
+import React, {useState, useEffect}  from 'react';
 import { Link } from 'react-router-dom';
-import {useState, useEffect} from 'react';
 import '../../../../css/MainPage/vacancies.css'
 import {BACKEND_URL} from '../../../appContans'
 import {formatDate, formatSalary} from '../../../Utils'
@@ -8,16 +7,17 @@ import {formatDate, formatSalary} from '../../../Utils'
 const Vacancies = () => {
 
     const [vacancyList, setVacancyList] = useState([])
-    const [vacancyListLoading, setVacancyListLoading] = useState(true)
 
     useEffect(() => {
-        fetch(BACKEND_URL + '/allVacancy')
-        .then(response => response.json())
-        .then(data => {setVacancyList(data);
-              setVacancyListLoading(false)})
+        let fetchData = async function(){
+            const response = await fetch(BACKEND_URL + '/allVacancy')
+            const data = await response.json()
+            setVacancyList(data)
+         }
+         fetchData()
     }, [])
 
-    if (vacancyListLoading) {
+    if (!vacancyList) {
         return <div>Загрузка...</div>;
     }
 

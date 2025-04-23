@@ -1,18 +1,18 @@
-.vacancyContainer{
+.candidateContainer{
     margin-top: 10px;
     width: 345px;
     height: 200px;
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
     padding-left: 15px;
     background-color: white;
-    flex: 0 0 calc(33.33% - 20px); 
+    flex: 0 0 calc(33.33% - 20px);
     box-sizing: border-box;
 }
 
-.vacancies{
+.candidates{
     margin-left: 5%;
     width: 90%;
     display: flex;
@@ -20,50 +20,22 @@
     justify-content: space-between;
 }
 
-.time{
-    color: #526269;
-    font-size: 13px;
-    margin-top: 13px;
-    font-weight: 600;
-    padding-bottom: 5px;
-}
-
-.work{
-    font-size: 20px;
-    font-weight: 600;
-    padding-bottom: 3px;
-    cursor: pointer;
-}
-
-.work a{
-    color: black;
+.name{
     text-decoration: none;
-}
-
-.salary{
+    color: black;
     font-size: 17px;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 
-.company{
-    font-size: 13px;
-    padding-bottom: 5px;
-    color: green;
-    font-weight: 600;
-}
-
-.city{
-    font-size: 13px;
-    margin-bottom: 13px;
-}
-
-.respondBtn, .callBtn{  
-    width: 45%;
+.respondBtn{
+    width: 50%;
     height: 38px;
     border: 0px;
     border-radius: 5px;
     transition: .3s;
     font-weight: 600;
+    margin-top: 40px
 }
 
 .respondBtn{
@@ -105,18 +77,18 @@
         justify-content: center;
         width: 150%;
     }
-  
+
     .work {
       font-size: 18px;
     }
-  
+
     .salary,
     .company,
     .city,
     .time {
       font-size: 14px;
     }
-  
+
     .respondBtn,
     .callBtn {
       width: 95%;
@@ -127,7 +99,7 @@
     .callBtn{
         margin-bottom: 15px;
     }
-  
+
     .btns {
       flex-direction: column;
     }

@@ -1,6 +1,7 @@
 from sqlmodel import (SQLModel, Field,
                       create_engine, Relationship)
 from sqlalchemy import JSON, String
+from sqlalchemy.orm import declarative_base
 from datetime import datetime
 from typing import List
 
@@ -55,6 +56,14 @@ class VacancyInfo(SQLModel, table=True):
     vacancy: Vacancy = Relationship(back_populates='vacancy_info')
 
 
+class CandidateResponses(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    vacancy_id: int = Field(foreign_key='vacancy.id')
+    candidate_id: int = Field(foreign_key='candidate.id')
+    company_id: int = Field(foreign_key='company.id')
+    message: str
+
+
 class JobTypes(SQLModel, table=True):
     __tablename__ = 'rbJobTypes'
 
@@ -79,3 +88,4 @@ class Currency(SQLModel, table=True):
 
 engine = create_engine("mysql+pymysql://dbuser:dbpassword@26.163.65.187:3306/dpmdb")
 SQLModel.metadata.create_all(engine)
+Base = declarative_base()

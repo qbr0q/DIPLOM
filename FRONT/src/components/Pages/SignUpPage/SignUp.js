@@ -39,6 +39,7 @@ const SignUp = () => {
         const jsonData = await response.json();
         if (response.ok) {
             alert(jsonData.message);
+            window.location.href = "/";
         } else {
             alert(jsonData.detail);
         }
