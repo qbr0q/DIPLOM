@@ -47,7 +47,8 @@ const Vacancies = () => {
                     </span>
 
                     <div className='btns'>
-                        <button className='respondBtn'>Откликнуться</button>
+                        <button className='respondBtn'
+                            onClick={() => window.location.href = `/vacancy/${data.id}`}>Откликнуться</button>
                         {data.isCalling ?
                         <button className='callBtn'>Позвонить</button> : null}
                     </div>

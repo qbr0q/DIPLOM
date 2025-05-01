@@ -30,7 +30,7 @@ const Candidates = () => {
                     </Link>
                     <h3 className='job'>{data.job}</h3>
                     <h4 className='workExperience'>{data.workExperience}</h4>
-                    <button className='respondBtn'>Связаться с кандидатом</button>
+                    <button className='candidateRespondBtn'>Связаться с кандидатом</button>
                 </div>
                 )
             )

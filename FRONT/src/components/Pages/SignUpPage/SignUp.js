@@ -7,6 +7,8 @@ import {validationSignUpCandidateForm,
         validationSignUpCompanyForm} from '../../Utils'
 
 const SignUp = () => {
+    document.title = 'Зарегистрироваться'
+
     const [activeForm, setActiveForm] = useState("formCandidate");
     let errors = []
 

@@ -3,32 +3,45 @@ import { useParams } from 'react-router-dom';
 import '../../../css/VacancyDetailsPage/vacancy.css'
 import {BACKEND_URL} from '../../appContans'
 import {formatDate, formatSalary} from '../../Utils'
+
+const sendCandidateResponse = async (vacancyId) => {
+    let data = {'vacancyId': vacancyId}
+
+    const response = await fetch(BACKEND_URL + '/sendCandidateResponse', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+    })
+
+    const jsonData = await response.json();
+    console.log(jsonData.detail)
+}
  
 const Vacancy = (state) => {
 
     const [vacancyInfo, setVacancyInfo] = useState(null)
-    const [vacancyLoading, setVacancyLoading] = useState(true)
 
     const { vacancyId } = useParams();
 
     useEffect(() => {
-        fetch(BACKEND_URL + `/vacancy/${vacancyId}`)
-        .then(response => response.json())
-        .then(data => {setVacancyInfo(data);
-              setVacancyLoading(false)})
-    }, [vacancyId])
+         let fetchData = async function(){
+             const response = await fetch(BACKEND_URL + `/vacancy/${vacancyId}`)
+             const data = await response.json()
+             setVacancyInfo(data)
+         }
+         fetchData()
+    }, [])
 
     const [logo, setLogo] = useState(null)
 
-    if (vacancyLoading) {
+    if (!vacancyInfo) {
         return <div>Загрузка...</div>;
     }
 
     document.title = vacancyInfo.position
-
-  /* useEffect(() => {
-    window.scrollTo(0, 0)
-  }, []) */
 
   return (
     <>
@@ -54,8 +67,11 @@ const Vacancy = (state) => {
                 })}
                 </ul>
             </div>
+            <textarea className='resMess' placeholder='Сопроводительное письмо'
+            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s.,!?()\-]/g, '')}} />
             <div className='vacancy_btns'>
-                <button className='vacancy_respondBtn'>Откликнуться</button>
+                <button className='vacancy_respondBtn'
+                    onClick={() => sendCandidateResponse(vacancyId)}>Откликнуться</button>
             {vacancyInfo.isCalling === true ?
                 <button className='vacancy_callBtn'>Позвонить</button> :
             null}

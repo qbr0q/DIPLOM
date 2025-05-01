@@ -32,7 +32,7 @@ const HeaderBtns = () => {
 
               <div className="DropdownMenu">
                 {isAuthenticated ? (
-                <><Link to="/account/messages`">Сообщения</Link>
+                <><Link to="/account/messages">Сообщения</Link>
                 <span onClick={logout}>Выйти</span></>
                 ) : (
                 <><Link to="/account/login">Войти</Link>

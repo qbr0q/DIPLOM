@@ -1,9 +1,11 @@
 from fastapi import (FastAPI, Header, Depends,
                     Request, Response, HTTPException)
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import uvicorn
 from sqlmodel import Session
 from authx.schema import TokenPayload
+from authx.exceptions import MissingTokenError
 
 from config import HOST, PORT, security, config
 from db.models import *
@@ -108,9 +110,23 @@ def getAllCandidates(session: Session = Depends(get_session)):
     return candidates
 
 
+@app.post('/sendCandidateResponse', dependencies=[Depends(security.access_token_required)])
+def sendCandidateResponse(data: dict, request: Request,
+                          session: Session = Depends(get_session)):
+    print(data)
+
+
 @app.get('/test', dependencies=[Depends(security.access_token_required)])
 async def test():
     return {'key': 'top secret'}
+
+
+@app.exception_handler(MissingTokenError)
+async def missing_token_handler(request: Request, exc: MissingTokenError):
+    return JSONResponse(
+        status_code=401,
+        content={"detail": "Требуется авторизация: отсутствует токен."}
+    )
 
 
 if __name__ == "__main__":

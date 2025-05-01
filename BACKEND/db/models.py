@@ -56,11 +56,12 @@ class VacancyInfo(SQLModel, table=True):
     vacancy: Vacancy = Relationship(back_populates='vacancy_info')
 
 
-class CandidateResponses(SQLModel, table=True):
+class Responses(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     vacancy_id: int = Field(foreign_key='vacancy.id')
     candidate_id: int = Field(foreign_key='candidate.id')
     company_id: int = Field(foreign_key='company.id')
+    response_type: str = Field(default=None)
     message: str
 
 
