@@ -1,5 +1,8 @@
 from passlib.context import CryptContext
+from authx.schema import TokenPayload
+
 from db.models import Company, Candidate
+from config import config
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -24,3 +27,10 @@ def find_user(session, login):
             user = session.query(Candidate).filter(Candidate.phone == login).first()
 
     return user
+
+
+def get_payload(request):
+    token = request.cookies.get("access_token")
+    payload = TokenPayload.decode(token, config.JWT_SECRET_KEY)
+    return payload
+

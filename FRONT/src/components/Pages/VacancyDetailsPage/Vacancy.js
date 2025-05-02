@@ -5,7 +5,8 @@ import {BACKEND_URL} from '../../appContans'
 import {formatDate, formatSalary} from '../../Utils'
 
 const sendCandidateResponse = async (vacancyId) => {
-    let data = {'vacancyId': vacancyId}
+    let resMess = document.getElementById('resMess').value;
+    let data = {'vacancyId': vacancyId, 'resMess': resMess}
 
     const response = await fetch(BACKEND_URL + '/sendCandidateResponse', {
         method: 'POST',
@@ -17,7 +18,7 @@ const sendCandidateResponse = async (vacancyId) => {
     })
 
     const jsonData = await response.json();
-    console.log(jsonData.detail)
+    console.log(response)
 }
  
 const Vacancy = (state) => {
@@ -67,7 +68,7 @@ const Vacancy = (state) => {
                 })}
                 </ul>
             </div>
-            <textarea className='resMess' placeholder='Сопроводительное письмо'
+            <textarea className='resMess' id='resMess' placeholder='Сопроводительное письмо'
             onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s.,!?()\-]/g, '')}} />
             <div className='vacancy_btns'>
                 <button className='vacancy_respondBtn'

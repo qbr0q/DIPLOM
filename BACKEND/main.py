@@ -4,14 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 from sqlmodel import Session
-from authx.schema import TokenPayload
 from authx.exceptions import MissingTokenError
+from datetime import timedelta
 
 from config import HOST, PORT, security, config
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
-from utils import hash_password, verify_password, find_user
+from utils import (hash_password, verify_password,
+                  find_user, get_payload)
 
 
 app = FastAPI()
@@ -86,7 +87,8 @@ async def loginUser(data: dict,
         data={
             'uid': str(user.id),
             'role': user.__class__.__tablename__
-        }
+        },
+        expiry=timedelta(hours=1)
     )
     response.set_cookie(
         key=config.JWT_ACCESS_COOKIE_NAME,
@@ -98,8 +100,7 @@ async def loginUser(data: dict,
 
 @app.get('/getRole')
 def get_role(request: Request):
-    token = request.cookies.get("access_token")
-    payload = TokenPayload.decode(token, config.JWT_SECRET_KEY)
+    payload = get_payload(request)
     role = payload.model_extra['role']
     return role
 
@@ -113,7 +114,13 @@ def getAllCandidates(session: Session = Depends(get_session)):
 @app.post('/sendCandidateResponse', dependencies=[Depends(security.access_token_required)])
 def sendCandidateResponse(data: dict, request: Request,
                           session: Session = Depends(get_session)):
-    print(data)
+    payload = get_payload(request)
+
+    user_id = int(payload.model_extra['uid'])
+    vacancy_id = (data['vacancyId'])
+    res_mess = data['resMess']
+    print(1)
+
 
 
 @app.get('/test', dependencies=[Depends(security.access_token_required)])
