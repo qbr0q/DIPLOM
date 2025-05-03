@@ -3,7 +3,7 @@ from fastapi import (FastAPI, Header, Depends,
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
-from sqlmodel import Session
+from sqlmodel import Session, select
 from authx.exceptions import MissingTokenError
 from datetime import timedelta
 
@@ -118,24 +118,38 @@ def sendCandidateResponse(data: dict, request: Request,
 
     user_id = int(payload.model_extra['uid'])
     vacancy_id = int(data['vacancyId'])
-    res_mess = data['resMes']
+    res_mess = data['resMess']
 
     dataDB = Responses(vacancy_id=vacancy_id,
                        candidate_id=user_id,
-                       res)
+                       response_type=1,
+                       message=res_mess)
+    session.add(dataDB)
+    session.commit()
+
+    return {'message': 'Резюме успешно отправлено'}
 
 
+@app.get('/isResponseAnswered/{vacancy_id}')
+def isResponseAnswered(vacancy_id: int,
+                       request: Request,
+                       session: Session = Depends(get_session)):
+    payload = get_payload(request)
+    user_id = int(payload.model_extra['uid'])
 
-@app.get('/test', dependencies=[Depends(security.access_token_required)])
-async def test():
-    return {'key': 'top secret'}
+    stmt = select(Responses.is_answered).where(
+        Responses.vacancy_id == vacancy_id,
+        Responses.candidate_id == user_id
+    )
+    is_answered = session.exec(stmt).first()
+    return is_answered
 
 
 @app.exception_handler(MissingTokenError)
 async def missing_token_handler(request: Request, exc: MissingTokenError):
     return JSONResponse(
         status_code=401,
-        content={"detail": "Требуется авторизация: отсутствует токен."}
+        content={"detail": "Требуется авторизация."}
     )
 
 

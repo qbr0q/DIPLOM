@@ -2,9 +2,44 @@ import {React, useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import '../../../css/VacancyDetailsPage/vacancy.css'
 import {BACKEND_URL} from '../../appContans'
-import {formatDate, formatSalary} from '../../Utils'
+import {formatSalary, showNotification} from '../../Utils'
 
-const sendCandidateResponse = async (vacancyId) => {
+ 
+const Vacancy = (state) => {
+
+    const [vacancyInfo, setVacancyInfo] = useState(null)
+    const [isAnswered, setIsAnswered] = useState(null)
+    const [refreshFlag, setRefreshFlag] = useState(false);
+
+    const { vacancyId } = useParams();
+
+    // получаем данные о вакансии
+    useEffect(() => {
+         let fetchVacancyData = async function(){
+             const response = await fetch(BACKEND_URL + `/vacancy/${vacancyId}`)
+             const data = await response.json()
+             setVacancyInfo(data)
+         }
+         fetchVacancyData()
+    }, [vacancyId])
+
+    // получаем данные о статусе отклика
+    useEffect(() => {
+         let fetchIsAnswered = async function(){
+             const response = await fetch(`${BACKEND_URL}/isResponseAnswered/${vacancyId}`, {
+                method: 'GET',
+                credentials: 'include',
+             });
+             const data = await response.json()
+             setIsAnswered(data)
+         }
+         if (document.cookie.includes('access_token=')) {
+            fetchIsAnswered();
+         }
+    }, [vacancyId, refreshFlag])
+
+    // функция отрпавляющая отклик в responses
+    const sendCandidateResponse = async (vacancyId) => {
     let resMess = document.getElementById('resMess').value;
     let data = {'vacancyId': vacancyId, 'resMess': resMess}
 
@@ -18,28 +53,37 @@ const sendCandidateResponse = async (vacancyId) => {
     })
 
     const jsonData = await response.json();
-    console.log(response)
+    if (response.ok) {
+        showNotification('Успех!', jsonData.message, 'success');
+        setRefreshFlag(prev => !prev);
+    } else {
+        showNotification('Ошибка!', jsonData.detail, 'error');
+    }
 }
- 
-const Vacancy = (state) => {
-
-    const [vacancyInfo, setVacancyInfo] = useState(null)
-
-    const { vacancyId } = useParams();
-
-    useEffect(() => {
-         let fetchData = async function(){
-             const response = await fetch(BACKEND_URL + `/vacancy/${vacancyId}`)
-             const data = await response.json()
-             setVacancyInfo(data)
-         }
-         fetchData()
-    }, [])
 
     const [logo, setLogo] = useState(null)
 
     if (!vacancyInfo) {
         return <div>Загрузка...</div>;
+    }
+
+    // если в базе нет записи с айдишником юзера и вакансией - отлика не было, иначе смотрим на значение в базе
+    let vacancyStatus = null
+    if (isAnswered === null) {
+        vacancyStatus = <>
+        <textarea className='resMess' id='resMess' placeholder='Сопроводительное письмо'/>
+        <div className='vacancy_btns'>
+            <button className='vacancy_respondBtn'
+                onClick={() => sendCandidateResponse(vacancyId)}>Откликнуться</button>
+        {vacancyInfo.isCalling === true ?
+            <button className='vacancy_callBtn'>Позвонить</button> :
+        null}
+        </div>
+        </>
+    } else if (isAnswered === false) {
+        vacancyStatus = <h1 className='vacancyStatus'>Отклик отправлен. Ожидается ответ от работодателя.</h1>
+    } else if (isAnswered === true) {
+        vacancyStatus = <h1 className='vacancyStatus'>Работодатель ответил на ваш отклик. Проверьте личные сообщения!</h1>
     }
 
     document.title = vacancyInfo.position
@@ -68,15 +112,8 @@ const Vacancy = (state) => {
                 })}
                 </ul>
             </div>
-            <textarea className='resMess' id='resMess' placeholder='Сопроводительное письмо'
-            onInput={(e) => {e.target.value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s.,!?()\-]/g, '')}} />
-            <div className='vacancy_btns'>
-                <button className='vacancy_respondBtn'
-                    onClick={() => sendCandidateResponse(vacancyId)}>Откликнуться</button>
-            {vacancyInfo.isCalling === true ?
-                <button className='vacancy_callBtn'>Позвонить</button> :
-            null}
-            </div>
+
+            {vacancyStatus}
         </div>
         <div className='companyInfo'>
             <img src={logo} alt='логотип компании' className='companyLogo'/>

@@ -108,6 +108,10 @@
     font-size: 15px;
 }
 
+.vacancyStatus{
+    margin-top: 20px
+}
+
 @media (max-width: 768px){
     .vacancyInfo{
         margin: 160px 20% 15px;

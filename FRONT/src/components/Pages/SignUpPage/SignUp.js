@@ -5,6 +5,7 @@ import '../../../css/Account/signup.css'
 import {BACKEND_URL} from '../../appContans'
 import {validationSignUpCandidateForm,
         validationSignUpCompanyForm} from '../../Utils'
+import {showNotification} from '../../Utils'
 
 const SignUp = () => {
     document.title = 'Зарегистрироваться'
@@ -40,13 +41,13 @@ const SignUp = () => {
         })
         const jsonData = await response.json();
         if (response.ok) {
-            alert(jsonData.message);
             window.location.href = "/";
+            showNotification('Успешная регистрация!', jsonData.message, 'success')
         } else {
-            alert(jsonData.detail);
+            showNotification('Ошибка регистрации!', jsonData.detail, 'error')
         }
         } else {
-            alert(errors.join('\n'))
+            showNotification('Ошибка регистрации!', errors.join('\n'), 'error')
             errors = []
         }
     }

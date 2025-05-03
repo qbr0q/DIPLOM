@@ -62,6 +62,7 @@ class Responses(SQLModel, table=True):
     candidate_id: int = Field(foreign_key='candidate.id', nullable=True)
     company_id: int = Field(foreign_key='company.id', nullable=True)
     response_type: str = Field(default=None)
+    is_answered: bool = Field(default=False)
     message: str = Field(nullable=True)
 
 

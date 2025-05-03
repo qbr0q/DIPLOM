@@ -117,9 +117,51 @@ function validationSignUpCompanyForm(formData) {
     return errors
 }
 
+function showNotification(title, message, type = 'info', duration = 4000) {
+    const colors = {
+        success: '#4caf50',
+        error: '#f44336',
+        warning: '#ff9800',
+        info: '#2196f3'
+    };
+
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.top = '20px';
+    container.style.right = '20px';
+    container.style.zIndex = 9999;
+    container.style.minWidth = '250px';
+    container.style.padding = '12px 16px';
+    container.style.marginBottom = '10px';
+    container.style.borderRadius = '8px';
+    container.style.backgroundColor = colors[type] || '#2196f3';
+    container.style.color = '#fff';
+    container.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+    container.style.fontFamily = 'sans-serif';
+    container.style.transition = 'opacity 0.3s ease';
+
+    const titleEl = document.createElement('div');
+    titleEl.style.fontWeight = 'bold';
+    titleEl.style.marginBottom = '4px';
+    titleEl.innerText = title;
+
+    const messageEl = document.createElement('div');
+    messageEl.innerText = message;
+
+    container.appendChild(titleEl);
+    container.appendChild(messageEl);
+    document.body.appendChild(container);
+
+    setTimeout(() => {
+        container.style.opacity = 0;
+        setTimeout(() => container.remove(), 300);
+    }, duration);
+}
+
 module.exports = {
     formatDate,
     formatSalary,
     validationSignUpCandidateForm,
-    validationSignUpCompanyForm
+    validationSignUpCompanyForm,
+    showNotification
   };

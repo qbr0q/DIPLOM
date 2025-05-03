@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../../../../css/BaseCss/headerBtns.css'
 import helpIcon from '../../../../media/helpIcon.svg'
 import authIcon from '../../../../media/authIcon.svg'
+import {showNotification} from '../../../Utils'
 
 const HeaderBtns = () => {
 
@@ -16,6 +17,7 @@ const HeaderBtns = () => {
     const logout = () => {
         document.cookie='access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
         window.location.href='/'
+        showNotification('Выход', 'Вы успешно вышли из аккаунта', 'info')
     }
 
       return (

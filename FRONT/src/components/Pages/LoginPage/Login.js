@@ -1,14 +1,12 @@
 import {React, useState} from 'react';
-import { Link } from 'react-router-dom';
 import Header from '../BaseComponents/Header/Header'
 import Footer from '../BaseComponents/Footer/Footer'
 import '../../../css/Account/login.css'
 import {BACKEND_URL} from '../../appContans'
+import {showNotification} from '../../Utils'
 
 const Login = () => {
   const [isClose, setIsClose] = useState(true)
-  const [login, setLogin] = useState('')
-  const [password, setPassword] = useState('')
 
   document.title = 'Войти в аккаунт'
 
@@ -28,10 +26,10 @@ const Login = () => {
         })
         const jsonData = await response.json();
         if (response.ok) {
-            alert(jsonData.message);
             window.location.href = "/";
+            showNotification('Успешной вход!', jsonData.message, 'success')
         } else {
-            alert(jsonData.detail);
+            showNotification('Ошибка входа', jsonData.detail, 'error')
         }
     }
 
