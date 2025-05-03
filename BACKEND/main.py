@@ -117,9 +117,12 @@ def sendCandidateResponse(data: dict, request: Request,
     payload = get_payload(request)
 
     user_id = int(payload.model_extra['uid'])
-    vacancy_id = (data['vacancyId'])
-    res_mess = data['resMess']
-    print(1)
+    vacancy_id = int(data['vacancyId'])
+    res_mess = data['resMes']
+
+    dataDB = Responses(vacancy_id=vacancy_id,
+                       candidate_id=user_id,
+                       res)
 
 
 

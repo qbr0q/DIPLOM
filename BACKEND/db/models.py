@@ -58,11 +58,11 @@ class VacancyInfo(SQLModel, table=True):
 
 class Responses(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    vacancy_id: int = Field(foreign_key='vacancy.id')
-    candidate_id: int = Field(foreign_key='candidate.id')
-    company_id: int = Field(foreign_key='company.id')
+    vacancy_id: int = Field(foreign_key='vacancy.id', nullable=True)
+    candidate_id: int = Field(foreign_key='candidate.id', nullable=True)
+    company_id: int = Field(foreign_key='company.id', nullable=True)
     response_type: str = Field(default=None)
-    message: str
+    message: str = Field(nullable=True)
 
 
 class JobTypes(SQLModel, table=True):
