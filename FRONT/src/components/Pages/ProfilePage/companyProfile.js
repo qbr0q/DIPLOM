@@ -1,14 +1,14 @@
 import React, {useState, useEffect}  from 'react';
 import {BACKEND_URL} from '../../appContans'
 
-const companyProfile = () => {
+const CompanyProfile = () => {
 
 
     return (
       <>
-        123
+        <p>1234</p>
       </>
     );
   };
 
-export default companyProfile
+export default CompanyProfile

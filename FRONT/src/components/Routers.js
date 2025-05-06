@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainPage from './Pages/MainPage/MainPage'
-import VacancyDetails from './Pages/VacancyDetailsPage/VacancyDetails'
+import Vacancy from './Pages/VacancyPage/Vacancy'
+import Candidate from './Pages/CandidatePage/Candidate'
 import Team from "./Pages/TeamPage/Team";
 import Help from './Pages/HelpPage/Help'
 import ErrorPath from "./Pages/ErrorPage/ErrorPath";
@@ -15,7 +16,11 @@ const Routers = createBrowserRouter([
     },
     {
       path: "/vacancy/:vacancyId",
-      element: <VacancyDetails/>
+      element: <Vacancy/>
+    },
+    {
+      path: "/candidate/:candidateId",
+      element: <Candidate/>
     },
     {
       path: '/team',

@@ -1,0 +1,32 @@
+.candidateInfo{
+    margin: 82px 15% 15px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 23px;
+}
+
+.candidate_respondBtn{
+    width: 250px;
+    height: 38px;
+    border: 0px;
+    border-radius: 5px;
+    transition: .3s;
+    font-weight: 600;
+    background-color: rgb(4, 172, 132);
+    color: white;
+}
+
+.candidate_respondBtn:hover{
+    cursor: pointer;
+    background-color: rgb(22, 192, 152);
+    transition: .3s;
+}
+
+.resMess{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-width: 243px;
+    min-height: 100px;
+    border-radius: 6px;
+    font-size: 15px;
+}

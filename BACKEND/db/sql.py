@@ -38,3 +38,10 @@ INNER JOIN rbCurrency rbc on rbc.currencyName = vc.currency
 INNER JOIN Company cm on vc.company_id = cm.id
 WHERE vc.id = :vacancy_id
 """)
+
+CANDIDATE_INFO_STMT = text("""
+SELECT
+    cd.job
+FROM Candidate cd
+WHERE cd.id = :candidate_id
+""")

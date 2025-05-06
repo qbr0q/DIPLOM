@@ -33,3 +33,7 @@ class VacancyInfoSchema(BaseModel):
     @classmethod
     def parse_json_field(cls, v):
         return json.loads(v)
+
+
+class CandidateInfoSchema(BaseModel):
+    job: str

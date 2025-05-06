@@ -1,5 +1,6 @@
 from fastapi import (FastAPI, Header, Depends,
-                    Request, Response, HTTPException)
+                    Request, Response, HTTPException,
+                    Query)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
@@ -99,29 +100,40 @@ async def loginUser(data: dict,
 
 
 @app.get('/getRole')
-def get_role(request: Request):
+async def get_role(request: Request):
     payload = get_payload(request)
     role = payload.model_extra['role']
     return role
 
 
 @app.get('/allCandidates')
-def getAllCandidates(session: Session = Depends(get_session)):
+async def getAllCandidates(session: Session = Depends(get_session)):
     candidates = session.query(Candidate).all()
     return candidates
 
 
+@app.get('/candidate/{candidate_id}', response_model=CandidateInfoSchema)
+async def getCandidateInfo(candidate_id: int,
+                           session: Session = Depends(get_session)):
+    record = session.execute(
+        CANDIDATE_INFO_STMT,
+        {"candidate_id": candidate_id}
+    )
+    candidate_info = record.fetchone()
+    return candidate_info
+
+
 @app.post('/sendCandidateResponse', dependencies=[Depends(security.access_token_required)])
-def sendCandidateResponse(data: dict, request: Request,
+async def sendCandidateResponse(data: dict, request: Request,
                           session: Session = Depends(get_session)):
     payload = get_payload(request)
 
-    user_id = int(payload.model_extra['uid'])
+    candidate_id = int(payload.model_extra['uid'])
     vacancy_id = int(data['vacancyId'])
     res_mess = data['resMess']
 
     dataDB = Responses(vacancy_id=vacancy_id,
-                       candidate_id=user_id,
+                       candidate_id=candidate_id,
                        response_type=1,
                        message=res_mess)
     session.add(dataDB)
@@ -130,17 +142,54 @@ def sendCandidateResponse(data: dict, request: Request,
     return {'message': 'Резюме успешно отправлено'}
 
 
-@app.get('/isResponseAnswered/{vacancy_id}')
-def isResponseAnswered(vacancy_id: int,
-                       request: Request,
-                       session: Session = Depends(get_session)):
+@app.post('/sendCompanyResponse', dependencies=[Depends(security.access_token_required)])
+async def sendCandidateResponse(data: dict, request: Request,
+                                session: Session = Depends(get_session)):
+    payload = get_payload(request)
+
+    company_id = int(payload.model_extra['uid'])
+    candidate_id = int(data['candidateId'])
+    res_mess = data['resMess']
+
+    dataDB = Responses(company_id=company_id,
+                       candidate_id=candidate_id,
+                       response_type=2,
+                       message=res_mess)
+    session.add(dataDB)
+    session.commit()
+
+    return {'message': 'Приглашение успешно отправлено'}
+
+
+@app.get('/isResponseAnswered')
+async def isResponseAnswered(request: Request, vacancy_id: int = Query(None),
+                             candidate_id: int = Query(None), response_type: int = Query(None),
+                             session: Session = Depends(get_session)) -> None | bool:
+    """
+    Ручка смотрит на статут ответа (is_answered) в таблице Responses для обеих ролей
+    :param vacancy_id: айди вакансии
+    :param candidate_id: айди кандидата
+    :param response_type: тип запрос (1 - от соискателя, 2 - от компании)
+    :param request: реквест с запроса (Request)
+    :param session: подключение к бд (Session)
+    :return: None, 0 или 1
+    """
     payload = get_payload(request)
     user_id = int(payload.model_extra['uid'])
 
-    stmt = select(Responses.is_answered).where(
-        Responses.vacancy_id == vacancy_id,
-        Responses.candidate_id == user_id
-    )
+    if response_type == 1:
+        stmt = select(Responses.is_answered).where(
+            Responses.vacancy_id == vacancy_id,
+            Responses.candidate_id == user_id,
+            Responses.response_type == 1
+        )
+    elif response_type == 2:
+        stmt = select(Responses.is_answered).where(
+            Responses.company_id == user_id,
+            Responses.candidate_id == candidate_id,
+            Responses.response_type == 2
+        )
+
     is_answered = session.exec(stmt).first()
     return is_answered
 

@@ -1,14 +1,16 @@
 import {React, useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-import '../../../css/VacancyDetailsPage/vacancy.css'
+import Header from '../BaseComponents/Header/Header';
+import Footer from '../BaseComponents/Footer/Footer';
+import '../../../css/VacancyPage/vacancy.css'
 import {BACKEND_URL} from '../../appContans'
 import {formatSalary, showNotification} from '../../Utils'
 
  
 const Vacancy = (state) => {
 
-    const [vacancyInfo, setVacancyInfo] = useState(null)
-    const [isAnswered, setIsAnswered] = useState(null)
+    const [vacancyInfo, setVacancyInfo] = useState(null);
+    const [isAnswered, setIsAnswered] = useState(null);
     const [refreshFlag, setRefreshFlag] = useState(false);
 
     const { vacancyId } = useParams();
@@ -26,7 +28,8 @@ const Vacancy = (state) => {
     // получаем данные о статусе отклика
     useEffect(() => {
          let fetchIsAnswered = async function(){
-             const response = await fetch(`${BACKEND_URL}/isResponseAnswered/${vacancyId}`, {
+         let url = `${BACKEND_URL}/isResponseAnswered?vacancy_id=${vacancyId}&response_type=1`
+             const response = await fetch(url, {
                 method: 'GET',
                 credentials: 'include',
              });
@@ -40,26 +43,26 @@ const Vacancy = (state) => {
 
     // функция отрпавляющая отклик в responses
     const sendCandidateResponse = async (vacancyId) => {
-    let resMess = document.getElementById('resMess').value;
-    let data = {'vacancyId': vacancyId, 'resMess': resMess}
+        let resMess = document.getElementById('resMess').value;
+        let data = {'vacancyId': vacancyId, 'resMess': resMess}
 
-    const response = await fetch(BACKEND_URL + '/sendCandidateResponse', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: 'include',
-        body: JSON.stringify(data)
-    })
+        const response = await fetch(BACKEND_URL + '/sendCandidateResponse', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        })
 
-    const jsonData = await response.json();
-    if (response.ok) {
-        showNotification('Успех!', jsonData.message, 'success');
-        setRefreshFlag(prev => !prev);
-    } else {
-        showNotification('Ошибка!', jsonData.detail, 'error');
+        const jsonData = await response.json();
+        if (response.ok) {
+            showNotification('Успех!', jsonData.message, 'success');
+            setRefreshFlag(prev => !prev);
+        } else {
+            showNotification('Ошибка!', jsonData.detail, 'error');
+        }
     }
-}
 
     const [logo, setLogo] = useState(null)
 
@@ -68,9 +71,9 @@ const Vacancy = (state) => {
     }
 
     // если в базе нет записи с айдишником юзера и вакансией - отлика не было, иначе смотрим на значение в базе
-    let vacancyStatus = null
+    let responseStatus = null
     if (isAnswered === null) {
-        vacancyStatus = <>
+        responseStatus = <>
         <textarea className='resMess' id='resMess' placeholder='Сопроводительное письмо'/>
         <div className='vacancy_btns'>
             <button className='vacancy_respondBtn'
@@ -81,15 +84,16 @@ const Vacancy = (state) => {
         </div>
         </>
     } else if (isAnswered === false) {
-        vacancyStatus = <h1 className='vacancyStatus'>Отклик отправлен. Ожидается ответ от работодателя.</h1>
+        responseStatus = <h1 className='responseStatus'>Отклик отправлен. Ожидается ответ от работодателя.</h1>
     } else if (isAnswered === true) {
-        vacancyStatus = <h1 className='vacancyStatus'>Работодатель ответил на ваш отклик. Проверьте личные сообщения!</h1>
+        responseStatus = <h1 className='responseStatus'>Работодатель ответил на ваш отклик. Проверьте личные сообщения!</h1>
     }
 
     document.title = vacancyInfo.position
 
   return (
     <>
+        <Header/>
         <div className='vacancyInfo'>
             <h1 className='vacancyWork'>{vacancyInfo.position}</h1>
             <h2 className='vacancySalary'>{formatSalary(vacancyInfo.salary,
@@ -113,7 +117,7 @@ const Vacancy = (state) => {
                 </ul>
             </div>
 
-            {vacancyStatus}
+            {responseStatus}
         </div>
         <div className='companyInfo'>
             <img src={logo} alt='логотип компании' className='companyLogo'/>
@@ -123,6 +127,7 @@ const Vacancy = (state) => {
                 <h5 className='companyAddress'>{vacancyInfo.companyAddress}</h5>
             </div>
         </div>
+        <Footer/>
     </>
   );
 }

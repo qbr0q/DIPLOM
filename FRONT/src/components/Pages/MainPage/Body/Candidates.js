@@ -25,12 +25,14 @@ const Candidates = () => {
         {
             Object.values(candidatesList).map((data, index) => (
                 <div className='candidateContainer' key={index}>
-                    <Link to={`/`} className='name'>
+                    <Link to={`/candidate/${data.id}`} className='name'>
                         {data.lastName} {data.firstName} {data.patronymic ? data.patronymic : ''}
                     </Link>
                     <h3 className='job'>{data.job}</h3>
                     <h4 className='workExperience'>{data.workExperience}</h4>
-                    <button className='candidateRespondBtn'>Связаться с кандидатом</button>
+                    <button className='candidateRespondBtn'
+                        onClick={() => window.location.href = `/candidate/${data.id}`}>
+                        Связаться с кандидатом</button>
                 </div>
                 )
             )
