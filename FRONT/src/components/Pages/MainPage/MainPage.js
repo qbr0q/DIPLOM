@@ -9,7 +9,7 @@ import {BACKEND_URL} from '../../appContans'
 const MainPage = () => {
     document.title = 'SuperJob'
 
-    const [role, setRole] = useState(null)
+    const [role, setRole] = useState('candidate')
 
     useEffect(() => {
         if (document.cookie.includes('access_token=')) {
@@ -18,6 +18,10 @@ const MainPage = () => {
             .then(data => setRole(data))
         }
     }, [])
+
+    if (!role) {
+        return <div>Загрузка..</div>
+    }
 
     return (
       <>

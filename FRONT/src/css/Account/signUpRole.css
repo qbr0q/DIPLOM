@@ -1,0 +1,37 @@
+.forms-wrapper-role{
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-direction: column;
+  margin-left: 20%;
+  gap: 20px
+}
+
+.form-group-role{
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group-role input {
+  width: 70%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.SignUpBtn{
+    margin-top: 50px;
+    margin-left: 6.5%;
+    width: 60%;
+    height: 35px;
+    font-size: 15px;
+    background-color: #1890ff;
+    color: white;
+    border-radius: 4px;
+    border: 0px;
+}
+
+.SignUpBtn:hover{
+    cursor: pointer
+}

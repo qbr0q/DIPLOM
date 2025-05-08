@@ -1,18 +1,28 @@
 .form-container {
-  max-width: 600px;
-  margin: 0 auto;
+  width: 50%;
+  margin-top: 100px;
+  margin-left: 25%;
+  margin-bottom: 30px;
   padding: 20px;
+  padding-top: 7%;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 10%;
   font-family: Arial, sans-serif;
+  background: white;
+  border-radius: 10px;
 }
+
 
 .switcher {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
   gap: 10px;
+  margin-left: 3%;
 }
 
-.switch-btn, .signUpBtn {
+.switch-btn, .nextBtn {
   padding: 10px 20px;
   border: 1px solid #ccc;
   background: #f5f5f5;
@@ -21,11 +31,12 @@
   transition: all 0.3s;
 }
 
-.signUpBtn {
+.nextBtn{
     background-color: #1890ff;
     color: white;
-    margin-left: 20%;
-    margin-top: 20px
+    margin-left: 30%;
+    margin-top: 20px;
+    width: 30%
 }
 
 .switch-btn.active {
@@ -45,6 +56,7 @@
   flex: 1;
   padding: 20px;
   transition: all 0.3s;
+  margin-bottom: 20px
 }
 
 .active-form {
@@ -63,7 +75,7 @@
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 15px
 }
 
 .form-group label {
@@ -71,18 +83,10 @@
   margin-bottom: 5px;
 }
 
-.form-group input, select {
+.form-group input {
   width: 80%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 15px;
-}
-
-.form-group select{width: 87%}
-
-.form-group textarea {
-    width: 85%;
-    min-width: 85%;
-    font-size: 15px;
 }

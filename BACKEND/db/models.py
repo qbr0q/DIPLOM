@@ -10,12 +10,8 @@ class Company(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     name: str
     password: str = Field(sa_type=String(64))
-    phone: str = Field(default=None)
+    phone: str = Field(default=None, nullable=True)
     mail: str
-    region: str = Field(default=None)
-    description: str
-    address: str = Field(default=None)
-    deleted: bool = Field(default=False)
     vacancies: List['Vacancy'] = Relationship(back_populates='company')
 
 
@@ -23,12 +19,10 @@ class Candidate(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     firstName: str
     lastName: str
-    patronymic: str = Field(default=None)
-    phone: str = Field(default=None)
-    mail: str
+    patronymic: str = Field(default=None, nullable=True)
+    phone: str = Field(default=None, nullable=True)
+    mail: str = Field(default=None, nullable=True)
     password: str = Field(sa_type=String(64))
-    job: str = Field(default=None)
-    workExperience: str = Field(default=None)
 
 
 class Vacancy(SQLModel, table=True):

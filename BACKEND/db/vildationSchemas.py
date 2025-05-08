@@ -12,7 +12,6 @@ class VacancyCardSchema(BaseModel):
     duration: str
     isCalling: bool
     name: str
-    region: str
     currencySymbol: str
 
 
@@ -26,8 +25,6 @@ class VacancyInfoSchema(BaseModel):
     candidateRequirements: List[str]
     isCalling: bool
     companyName: str
-    companyDescription: str
-    companyAddress: str
 
     @field_validator("jobDuties", "candidateRequirements", mode="before")
     @classmethod
@@ -36,4 +33,4 @@ class VacancyInfoSchema(BaseModel):
 
 
 class CandidateInfoSchema(BaseModel):
-    job: str
+    firstName: str

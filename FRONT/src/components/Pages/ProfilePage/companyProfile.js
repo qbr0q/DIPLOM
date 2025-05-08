@@ -6,7 +6,7 @@ const CompanyProfile = () => {
 
     return (
       <>
-        <p>1234</p>
+        <p>12345</p>
       </>
     );
   };

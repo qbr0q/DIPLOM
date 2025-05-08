@@ -20,6 +20,14 @@ const HeaderBtns = () => {
         showNotification('Выход', 'Вы успешно вышли из аккаунта', 'info')
     }
 
+    const ProfileOrError = () => {
+        if (isAuthenticated){
+            window.location.href='/account/profile'
+        } else {
+            showNotification('Нет доступа', 'Необходимо войти в аккаунт', 'info')
+        }
+    }
+
       return (
         <div className='HeaderBtns'>
           <Link className='HelpBtn' to={"/help"}>
@@ -27,10 +35,10 @@ const HeaderBtns = () => {
             <label htmlFor='helpIcon'>Помощь</label>
           </Link>
             <div className='AuthDropdown'>
-              <Link className='AccountBtn' to={"/account/profile"}>
+              <span className='AccountBtn' onClick={ProfileOrError}>
                 <img src={authIcon} id='accountIcon' alt='иконка личного кабинета'/>
                 <label htmlFor='accountIcon'>Личный кабинет</label>
-              </Link>
+              </span>
 
               <div className="DropdownMenu">
                 {isAuthenticated ? (

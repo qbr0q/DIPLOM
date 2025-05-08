@@ -81,7 +81,7 @@ const Candidate = (state) => {
         responseStatus = <h1 className='responseStatus'>Кандидат ответил на ваше приглашение. Проверьте личные сообщения!</h1>
     }
 
-    document.title = candidateInfo.job
+    document.title = candidateInfo.firstName
 
     return (
     <>

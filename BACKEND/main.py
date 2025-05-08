@@ -50,18 +50,37 @@ async def getVacancyInfo(vacancy_id: int, session: Session = Depends(get_session
     return vacancy_info
 
 
+@app.get('/account/canSignUp')
+async def canSignUp(login: str,
+                    session: Session = Depends(get_session)):
+    user = find_user(session, login)
+    if user:
+        raise HTTPException(status_code=401, detail='Пользователь с такими данными уже существует')
+
+    return True
+
 @app.post('/account/signUp')
 async def signUpUser(data: dict,
                      session: Session = Depends(get_session),
                      role: str = Header(None, alias="X-User-Role")):
-    userMail = find_user(session, data['mail'])
-    userPhone = find_user(session, data['phone'])
-    if userMail or userPhone:
-        raise HTTPException(status_code=401, detail='Пользователь с такими данными уже существует')
+    dataDB = None
     if role == 'candidate':
-        dataDB = Candidate(**data)
+        login_is_mail = '@' in data['login']
+        dataDB = Candidate(
+            firstName=data['firstName'],
+            lastName=data['lastName'],
+            patronymic=data.get('patronymic'),
+            phone=data['login'] if not login_is_mail else None,
+            mail=data['login'] if login_is_mail else None,
+            password=data['candidatePass']
+        )
     elif role == 'company':
-        dataDB = Company(**data)
+        dataDB = Company(
+            name=data['companyName'],
+            mail=data['login'],
+            password=data['companyPass']
+        )
+
     dataDB.password = hash_password(dataDB.password)
     session.add(dataDB)
     session.commit()
