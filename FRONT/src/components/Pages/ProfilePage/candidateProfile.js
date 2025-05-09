@@ -6,7 +6,10 @@ const CandidateProfile = () => {
 
     return (
       <>
-        <p>1234</p>
+        <p>профиль кандидата</p>
+        <button onClick={() => window.location.href = '/account/editProfile'}>
+            Редактировать профиль
+        </button>
       </>
     );
   };

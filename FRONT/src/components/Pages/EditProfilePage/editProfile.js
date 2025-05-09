@@ -1,17 +1,16 @@
 import React, {useState, useEffect}  from 'react';
 import Header from '../BaseComponents/Header/Header';
 import Footer from '../BaseComponents/Footer/Footer';
+import EditCompanyProfile from './editCompanyProfile';
+import EditCandidateProfile from './editCandidateProfile';
 import {BACKEND_URL} from '../../appContans'
-import CompanyProfile from './companyProfile';
-import CandidateProfile from './candidateProfile';
 import {fetchData} from '../../Utils'
 
-const Profile = () => {
-    document.title = 'Личный кабинет'
+const EditProfile = () => {
 
-    const [role, setRole] = useState(null)
-    const [companyProfileInfo, setCompanyProfileInfo] = useState(null)
-    const [candidateProfileInfo, setCandidateProfileInfo] = useState(null)
+    document.title = 'Редактирование профиля'
+
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
         fetchData('/getRole', setRole)
@@ -25,11 +24,11 @@ const Profile = () => {
       <>
         <Header/>
         {role == 'company'
-        ? <CompanyProfile/>
-        : <CandidateProfile/>}
+        ? <EditCompanyProfile/>
+        : <EditCandidateProfile/>}
         <Footer/>
       </>
     );
   };
 
-export default Profile
+export default EditProfile

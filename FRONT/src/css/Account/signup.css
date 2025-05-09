@@ -4,10 +4,10 @@
   margin-left: 25%;
   margin-bottom: 30px;
   padding: 20px;
-  padding-top: 7%;
+  padding-top: 4%;
   padding-left: 30px;
   padding-right: 30px;
-  padding-bottom: 10%;
+  padding-bottom: 8%;
   font-family: Arial, sans-serif;
   background: white;
   border-radius: 10px;
@@ -89,4 +89,9 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 15px;
+}
+
+.formTitle{
+    margin-left: 20%;
+    margin-bottom: 7%;
 }

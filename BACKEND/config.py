@@ -10,3 +10,6 @@ security = AuthX(config=config)
 
 HOST = 'localhost'
 PORT = 8080
+
+FRONT_HOST = 'localhost'
+FRONT_PORT = '3000'

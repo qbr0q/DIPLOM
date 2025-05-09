@@ -106,6 +106,7 @@
     min-height: 100px;
     border-radius: 6px;
     font-size: 15px;
+    resize: vertical;
 }
 
 .vacancyStatus{

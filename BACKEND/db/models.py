@@ -2,7 +2,7 @@ from sqlmodel import (SQLModel, Field,
                       create_engine, Relationship)
 from sqlalchemy import JSON, String
 from sqlalchemy.orm import declarative_base
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
 
 
@@ -23,6 +23,14 @@ class Candidate(SQLModel, table=True):
     phone: str = Field(default=None, nullable=True)
     mail: str = Field(default=None, nullable=True)
     password: str = Field(sa_type=String(64))
+
+
+class CandidateInfo(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    birth_date: date = Field(default=None, nullable=True)
+    sex: str = Field(default=None, nullable=True)
+    about: str = Field(sa_type=String(1024), default=None, nullable=True)
+    candidate_id: int = Field(foreign_key='candidate.id')
 
 
 class Vacancy(SQLModel, table=True):

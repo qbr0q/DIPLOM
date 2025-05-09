@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
 import json
 
@@ -32,5 +32,12 @@ class VacancyInfoSchema(BaseModel):
         return json.loads(v)
 
 
-class CandidateInfoSchema(BaseModel):
+class CandidateDataSchema(BaseModel):
+    lastName: str
     firstName: str
+    patronymic: str
+    phone: str | None
+    mail: str | None
+    birth_date: date | None
+    sex: str | None
+    about: str | None

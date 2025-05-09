@@ -5,6 +5,7 @@ import Vacancies from "./Body/Vacancies";
 import Candidates from "./Body/Candidates";
 import Footer from "../BaseComponents/Footer/Footer";
 import {BACKEND_URL} from '../../appContans'
+import {fetchData} from '../../Utils'
 
 const MainPage = () => {
     document.title = 'SuperJob'
@@ -13,9 +14,7 @@ const MainPage = () => {
 
     useEffect(() => {
         if (document.cookie.includes('access_token=')) {
-            fetch(BACKEND_URL + '/getRole', {credentials: 'include'})
-            .then(response => response.json())
-            .then(data => setRole(data))
+            fetchData('/getRole', setRole)
         }
     }, [])
 

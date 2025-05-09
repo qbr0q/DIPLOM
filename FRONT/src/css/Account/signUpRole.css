@@ -4,7 +4,7 @@
   overflow: hidden;
   flex-direction: column;
   margin-left: 20%;
-  gap: 20px
+  gap: 20px;
 }
 
 .form-group-role{
@@ -34,4 +34,14 @@
 
 .SignUpBtn:hover{
     cursor: pointer
+}
+
+.companyFormTitle{
+    margin-left: 8%;
+    margin-bottom: 3%;
+}
+
+.candidateFormTitle{
+    margin-left: 12%;
+    margin-bottom: 3%;
 }

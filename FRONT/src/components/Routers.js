@@ -8,6 +8,7 @@ import ErrorPath from "./Pages/ErrorPage/ErrorPath";
 import SignUp from "./Pages/SignUpPage/SignUp";
 import Login from "./Pages/LoginPage/Login";
 import Profile from "./Pages/ProfilePage/Profile";
+import EditProfile from "./Pages/EditProfilePage/editProfile";
 
 const Routers = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ const Routers = createBrowserRouter([
     {
       path: '/account/profile',
       element: <Profile/>
+    },
+    {
+      path: '/account/editProfile',
+      element: <EditProfile/>
     },
     {
       path: '*',

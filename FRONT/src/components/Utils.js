@@ -135,18 +135,6 @@ export function validationSignUpCompanyForm(formData) {
     return errors
 }
 
-export function loginUser(data) {
-    const response = fetch(BACKEND_URL + '/account/login', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data),
-            credentials: "include"
-    })
-    return response
-}
-
 export function showNotification(title, message, type = 'info', duration = 2000) {
     const colors = {
         success: '#4caf50',
@@ -217,4 +205,24 @@ export function showNotification(title, message, type = 'info', duration = 2000)
         container.style.opacity = 0;
         setTimeout(() => container.remove(), 300);
     }, duration);
+}
+
+export function loginUser(data) {
+    const response = fetch(BACKEND_URL + '/account/login', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+            credentials: "include"
+    })
+
+    return response
+}
+
+// передаем функцию set из useState и в нее закидываем ответ с бека
+export function fetchData(route, setter) {
+  fetch(BACKEND_URL + route, { credentials: 'include' })
+    .then(res => res.json())
+    .then(data => setter(data))
 }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect}  from 'react';
+import React  from 'react';
 import '../../../css/Account/signUpRole.css'
 import {validationSignUpCandidateForm,
         showNotification,
@@ -50,6 +50,7 @@ const SignUpCompany = ({context}) => {
     return (
     <div className="form-container">
         <form className="forms-wrapper-role" onSubmit={handleSubmit}>
+            <h1 className='candidateFormTitle'>Регистрация кандидата</h1>
             <div className="form-group-role">
                 <label>Имя</label>
                 <input type="text" name="firstName"/>

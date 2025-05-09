@@ -13,6 +13,7 @@ const SignUp = () => {
     document.title = 'Зарегистрироваться'
 
     const [activeForm, setActiveForm] = useState("formCandidate");
+    const [formTitle, setFormTitle] = useState("Зарегистрироваться как кандидат");
     const [role, setRole] = useState(null);
     const [login, setLogin] = useState(null);
     let errors = []
@@ -52,16 +53,19 @@ const SignUp = () => {
     let signUpForm = null
     if (!role) {
         signUpForm = <div className="form-container">
+        <h1 className='formTitle'>{formTitle}</h1>
       <div className="switcher">
         <button
           className={`switch-btn ${activeForm === 'formCandidate' ? 'active' : ''}`}
-          onClick={() => setActiveForm('formCandidate')}
+          onClick={() => {setActiveForm('formCandidate');
+                          setFormTitle('Зарегистрироваться как кандидат')}}
         >
           Ищу работу
         </button>
         <button
           className={`switch-btn ${activeForm === 'formVacancy' ? 'active' : ''}`}
-          onClick={() => setActiveForm('formVacancy')}
+          onClick={() => {setActiveForm('formVacancy');
+                          setFormTitle('Зарегистрироваться как работодатель')}}
         >
           Ищу работников
         </button>
@@ -93,8 +97,8 @@ const SignUp = () => {
         </form>
       </div>
     </div>
-    } else if (role == 'company') {signUpForm = <SignUpCompany context={{ role, login }}/>}
-    else if (role == 'candidate') {signUpForm = <SignUpCandidate context={{ role, login }}/>}
+    } else if (role === 'company') {signUpForm = <SignUpCompany context={{ role, login }}/>}
+    else if (role === 'candidate') {signUpForm = <SignUpCandidate context={{ role, login }}/>}
 
   return (<>
   <Header/>

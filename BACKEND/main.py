@@ -8,7 +8,9 @@ from sqlmodel import Session, select
 from authx.exceptions import MissingTokenError
 from datetime import timedelta
 
-from config import HOST, PORT, security, config
+from config import (HOST, PORT, security,
+                    config, FRONT_HOST, FRONT_PORT)
+
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
@@ -26,7 +28,7 @@ def get_session():
 
 app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=[f"http://{FRONT_HOST}:{FRONT_PORT}"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -115,14 +117,22 @@ async def loginUser(data: dict,
         value=token,
         expires=60 * 60
     )
+
     return {'message': 'Успешный вход'}
 
 
 @app.get('/getRole')
-async def get_role(request: Request):
+async def getRole(request: Request):
     payload = get_payload(request)
     role = payload.model_extra['role']
     return role
+
+
+@app.get('/getUserId')
+async def getUserId(request: Request):
+    payload = get_payload(request)
+    uid = payload.model_extra['uid']
+    return uid
 
 
 @app.get('/allCandidates')
@@ -131,17 +141,17 @@ async def getAllCandidates(session: Session = Depends(get_session)):
     return candidates
 
 
-@app.get('/candidate/{candidate_id}', response_model=CandidateInfoSchema)
-async def getCandidateInfo(candidate_id: int,
+@app.get('/candidate/{candidate_id}', response_model=CandidateDataSchema)
+async def getCandidateData(candidate_id: int,
                            session: Session = Depends(get_session)):
     record = session.execute(
-        CANDIDATE_INFO_STMT,
+        CANDIDATE_DATA_STMT,
         {"candidate_id": candidate_id}
     )
-    candidate_info = record.fetchone()
-    return candidate_info
+    candidate_data = record.fetchone()
+    return candidate_data
 
-
+# TODO: Объединить в одну ручку sendCandidateResponse и sendCompanyResponse
 @app.post('/sendCandidateResponse', dependencies=[Depends(security.access_token_required)])
 async def sendCandidateResponse(data: dict, request: Request,
                           session: Session = Depends(get_session)):
