@@ -35,7 +35,7 @@ class VacancyInfoSchema(BaseModel):
 class CandidateDataSchema(BaseModel):
     lastName: str
     firstName: str
-    patronymic: str
+    patronymic: str | None
     phone: str | None
     mail: str | None
     birth_date: date | None

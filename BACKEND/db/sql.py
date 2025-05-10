@@ -38,11 +38,13 @@ WHERE vc.id = :vacancy_id
 
 CANDIDATE_DATA_STMT = text("""
 SELECT
+    cd.id as candidateId,
     cd.lastName,
     cd.firstName,
     cd.patronymic,
     cd.phone,
     cd.mail,
+    cdi.id as CandidateInfoId,
     cdi.birth_date,
     cdi.sex,
     cdi.about

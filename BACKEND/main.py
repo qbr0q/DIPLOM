@@ -14,6 +14,7 @@ from config import (HOST, PORT, security,
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
+from db.utils import commit_data
 from utils import (hash_password, verify_password,
                   find_user, get_payload)
 
@@ -65,27 +66,36 @@ async def canSignUp(login: str,
 async def signUpUser(data: dict,
                      session: Session = Depends(get_session),
                      role: str = Header(None, alias="X-User-Role")):
-    dataDB = None
+    data_main = None
+    data_info = None
     if role == 'candidate':
         login_is_mail = '@' in data['login']
-        dataDB = Candidate(
+        data_main = Candidate(
             firstName=data['firstName'],
             lastName=data['lastName'],
-            patronymic=data.get('patronymic'),
+            patronymic=data.get('patronymic') or None, # get возвращает пустую строку, а мне надо null в бд (да, or выберет None, лол)
             phone=data['login'] if not login_is_mail else None,
             mail=data['login'] if login_is_mail else None,
             password=data['candidatePass']
         )
     elif role == 'company':
-        dataDB = Company(
+        data_main = Company(
             name=data['companyName'],
             mail=data['login'],
             password=data['companyPass']
         )
 
-    dataDB.password = hash_password(dataDB.password)
-    session.add(dataDB)
-    session.commit()
+    data_main.password = hash_password(data_main.password)
+    commit_data(session, data_main)
+
+    if role == 'candidate':
+        candidate_id = data_main.id
+        data_info = CandidateInfo(candidate_id=candidate_id)
+    elif role == 'company':
+        pass
+
+    commit_data(session, data_info)
+
     return {'message': 'Успешная регистрация'}
 
 
@@ -121,6 +131,11 @@ async def loginUser(data: dict,
     return {'message': 'Успешный вход'}
 
 
+@app.patch('/account/candidate/updateProfile')
+def candidate_update_profile(data: dict):
+    print(1)
+
+
 @app.get('/getRole')
 async def getRole(request: Request):
     payload = get_payload(request)
@@ -151,43 +166,37 @@ async def getCandidateData(candidate_id: int,
     candidate_data = record.fetchone()
     return candidate_data
 
-# TODO: Объединить в одну ручку sendCandidateResponse и sendCompanyResponse
-@app.post('/sendCandidateResponse', dependencies=[Depends(security.access_token_required)])
-async def sendCandidateResponse(data: dict, request: Request,
-                          session: Session = Depends(get_session)):
+
+@app.post('/sendResponse', dependencies=[Depends(security.access_token_required)])
+async def sendResponse(data: dict,
+                       request: Request,
+                       session: Session = Depends(get_session)):
     payload = get_payload(request)
-
-    candidate_id = int(payload.model_extra['uid'])
-    vacancy_id = int(data['vacancyId'])
     res_mess = data['resMess']
+    role = data['role']
+    dataDB = None
 
-    dataDB = Responses(vacancy_id=vacancy_id,
-                       candidate_id=candidate_id,
-                       response_type=1,
-                       message=res_mess)
-    session.add(dataDB)
-    session.commit()
+    if role == 'candidate':
+        candidate_id = int(payload.model_extra['uid'])
+        vacancy_id = int(data['vacancyId'])
 
-    return {'message': 'Резюме успешно отправлено'}
+        dataDB = Responses(vacancy_id=vacancy_id,
+                           candidate_id=candidate_id,
+                           response_type=1,
+                           message=res_mess)
+    elif role == 'company':
+        company_id = int(payload.model_extra['uid'])
+        candidate_id = int(data['candidateId'])
 
+        dataDB = Responses(company_id=company_id,
+                           candidate_id=candidate_id,
+                           response_type=2,
+                           message=res_mess)
 
-@app.post('/sendCompanyResponse', dependencies=[Depends(security.access_token_required)])
-async def sendCandidateResponse(data: dict, request: Request,
-                                session: Session = Depends(get_session)):
-    payload = get_payload(request)
+    commit_data(session, dataDB)
 
-    company_id = int(payload.model_extra['uid'])
-    candidate_id = int(data['candidateId'])
-    res_mess = data['resMess']
-
-    dataDB = Responses(company_id=company_id,
-                       candidate_id=candidate_id,
-                       response_type=2,
-                       message=res_mess)
-    session.add(dataDB)
-    session.commit()
-
-    return {'message': 'Приглашение успешно отправлено'}
+    response_name = 'Резюме' if role == 'candidate' else 'Приглашение'
+    return {'message': f'{response_name} успешно отправлено'}
 
 
 @app.get('/isResponseAnswered')

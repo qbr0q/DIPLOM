@@ -45,11 +45,11 @@ const Candidate = (state) => {
     }
 
     // отправляет приглашение в Responses
-    const sendCompanyResponse = async (candidateId) => {
+    const sendResponse = async (candidateId) => {
         let resMess = document.getElementById('resMess').value;
-        let data = {'candidateId': candidateId, 'resMess': resMess}
+        let data = {'candidateId': candidateId, 'resMess': resMess, 'role': 'company'}
 
-        const response = await fetch(BACKEND_URL + '/sendCompanyResponse', {
+        const response = await fetch(BACKEND_URL + '/sendResponse', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -63,7 +63,7 @@ const Candidate = (state) => {
             showNotification('Успех!', jsonData.message, 'success');
             setRefreshFlag(prev => !prev);
         } else {
-            showNotification('Ошибка!', jsonData.detail, 'error');
+            showNotification('Ошибка!', JSON.stringify(jsonData.detail), 'error');
         }
     }
 
@@ -73,7 +73,7 @@ const Candidate = (state) => {
         responseStatus = <>
                 <textarea className='resMess' id='resMess' placeholder='Письмо с предложением'/>
         <button className='candidate_respondBtn'
-                onClick={() => sendCompanyResponse(candidateId)}>Связаться с кандидатом</button>
+                onClick={() => sendResponse(candidateId)}>Связаться с кандидатом</button>
         </>
     } else if (isAnswered === false) {
         responseStatus = <h1 className='responseStatus'>Приглашение отправлено. Ожидается ответ от кандидата.</h1>

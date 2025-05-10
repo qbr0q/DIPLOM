@@ -42,11 +42,11 @@ const Vacancy = (state) => {
     }, [vacancyId, refreshFlag])
 
     // функция отрпавляющая отклик в responses
-    const sendCandidateResponse = async (vacancyId) => {
+    const sendResponse = async (vacancyId) => {
         let resMess = document.getElementById('resMess').value;
-        let data = {'vacancyId': vacancyId, 'resMess': resMess}
+        let data = {'vacancyId': vacancyId, 'resMess': resMess, 'role': 'candidate'}
 
-        const response = await fetch(BACKEND_URL + '/sendCandidateResponse', {
+        const response = await fetch(BACKEND_URL + '/sendResponse', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -60,7 +60,7 @@ const Vacancy = (state) => {
             showNotification('Успех!', jsonData.message, 'success');
             setRefreshFlag(prev => !prev);
         } else {
-            showNotification('Ошибка!', jsonData.detail, 'error');
+            showNotification('Ошибка!', JSON.stringify(jsonData.detail), 'error');
         }
     }
 
@@ -77,7 +77,7 @@ const Vacancy = (state) => {
         <textarea className='resMess' id='resMess' placeholder='Сопроводительное письмо'/>
         <div className='vacancy_btns'>
             <button className='vacancy_respondBtn'
-                onClick={() => sendCandidateResponse(vacancyId)}>Откликнуться</button>
+                onClick={() => sendResponse(vacancyId)}>Откликнуться</button>
         {vacancyInfo.isCalling === true ?
             <button className='vacancy_callBtn'>Позвонить</button> :
         null}
