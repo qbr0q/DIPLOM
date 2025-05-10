@@ -35,13 +35,23 @@ const EditCandidateProfile = () => {
       { key: 'portfolio', label: 'Портфолио' },
     ];
 
+    // фильтруем пустые объекты грязных полей или объекты, где только айди
+    function isEmptyExceptId(obj) {
+        const keys = Object.keys(obj);
+        return keys.length === 0 || (keys.length === 1 && keys[0] === 'id');
+    }
+
     function saveChanges() {
         const baseInfo = getDirtyData(baseInfoRef.current);
 
-        const dataToSave = {
+        const entries = Object.entries({
             'Candidate': baseInfo.Candidate,
             'CandidateInfo': baseInfo.CandidateInfo
-        };
+        });
+        // отправляем на бек только объекты с изменениями
+        const dataToSave = Object.fromEntries(
+            entries.filter(([_, value]) => !isEmptyExceptId(value))
+        );
 
         fetch(BACKEND_URL + '/account/candidate/updateProfile', {
             method: 'PATCH',
@@ -58,8 +68,8 @@ const EditCandidateProfile = () => {
         const infoFields = ['birth_date', 'sex', 'about'];
 
         const byTable = {
-            Candidate: {},
-            CandidateInfo: {}
+            Candidate: {'id': Number(candidateId)},
+            CandidateInfo: {'id': Number(candidateData.candidateInfoId)}
         };
 
         for (let key in dirtyFields) {

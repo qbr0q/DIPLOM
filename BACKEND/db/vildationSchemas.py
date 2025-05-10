@@ -33,11 +33,13 @@ class VacancyInfoSchema(BaseModel):
 
 
 class CandidateDataSchema(BaseModel):
+    candidateId: int
     lastName: str
     firstName: str
     patronymic: str | None
     phone: str | None
     mail: str | None
+    candidateInfoId: int
     birth_date: date | None
     sex: str | None
     about: str | None

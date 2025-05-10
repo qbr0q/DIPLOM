@@ -1,5 +1,9 @@
+from authx import TokenPayload
 from passlib.context import CryptContext
 from authx.schema import TokenPayload
+from sqlalchemy.orm import Session, DeclarativeBase
+from typing import Any, Type
+from fastapi import Request
 
 from db.models import Company, Candidate
 from config import config
@@ -8,16 +12,36 @@ from config import config
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def hash_password(password: str) -> str:
+def hash_password(
+        password: str
+) -> str:
+    """
+    Возвращает хеш пароля
+    :param password: пароль
+    :return: хеш пароля
+    """
     return pwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+def verify_password(
+        plain_password: str,
+        hashed_password: str
+) -> bool:
+    """
+    Сравнивает хеши пароля из базы и введенного
+    :param plain_password: введенный пароль из формы
+    :param hashed_password: пароль из базы
+    :return: булевое значение, обозначающее совпадение паролей
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def find_user(session, login):
-    if '@' in login: # если входим через почту
+def find_user(
+        session: Session,
+        login: str | Any
+) -> Type[Candidate] | Type[Company]:
+    # если входит через почту
+    if '@' in login:
         user = session.query(Company).filter(Company.mail == login).first()
         if not user:
             user = session.query(Candidate).filter(Candidate.mail == login).first()
@@ -29,8 +53,14 @@ def find_user(session, login):
     return user
 
 
-def get_payload(request):
+def get_payload(
+        request: Request
+) -> TokenPayload:
+    """
+    Возвращает раскодированный токен из куки
+    :param request:
+    :return:
+    """
     token = request.cookies.get("access_token")
     payload = TokenPayload.decode(token, config.JWT_SECRET_KEY)
     return payload
-

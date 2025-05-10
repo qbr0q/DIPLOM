@@ -1,12 +1,14 @@
 from fastapi import (FastAPI, Header, Depends,
-                    Request, Response, HTTPException,
-                    Query)
+                     Request, Response, HTTPException,
+                     Query)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy.engine import Row
 import uvicorn
 from sqlmodel import Session, select
 from authx.exceptions import MissingTokenError
 from datetime import timedelta
+from typing import Any, Sequence
 
 from config import (HOST, PORT, security,
                     config, FRONT_HOST, FRONT_PORT)
@@ -14,15 +16,20 @@ from config import (HOST, PORT, security,
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
-from db.utils import commit_data
+from db.utils import (commit_data, string_tables,
+                      update_data)
 from utils import (hash_password, verify_password,
-                  find_user, get_payload)
+                   find_user, get_payload)
 
 
 app = FastAPI()
 
 
 def get_session():
+    """
+    Открывает сессию с бд
+    :return: Session
+    """
     with Session(engine) as session:
         yield session
 
@@ -37,14 +44,30 @@ app.add_middleware(
 
 
 @app.get('/allVacancy', response_model=list[VacancyCardSchema])
-async def get_all_vacancy(session: Session = Depends(get_session)):
+async def get_all_vacancy(
+        session: Session = Depends(get_session)
+) -> Sequence[Row[tuple[...]]]:
+    """
+    Возвращает список всех вакансий
+    :param session: Session
+    :return: list[Row]
+    """
     records = session.execute(ALL_VACANCY_STMT)
     all_vacancy = records.fetchall()
     return all_vacancy
 
 
 @app.get('/vacancy/{vacancy_id}', response_model=VacancyInfoSchema)
-async def getVacancyInfo(vacancy_id: int, session: Session = Depends(get_session)):
+async def get_vacancy_info(
+        vacancy_id: int,
+        session: Session = Depends(get_session)
+) -> Row[tuple[Any, ...] | Any]:
+    """
+    Возвращает информацию о вакансии из запроса
+    :param vacancy_id: айди вакансии
+    :param session: подключение к бд
+    :return: собранная информация
+    """
     record = session.execute(
         VACANCY_INFO_STMT,
         {"vacancy_id": vacancy_id}
@@ -54,18 +77,35 @@ async def getVacancyInfo(vacancy_id: int, session: Session = Depends(get_session
 
 
 @app.get('/account/canSignUp')
-async def canSignUp(login: str,
-                    session: Session = Depends(get_session)):
+async def can_sign_up(
+        login: str,
+        session: Session = Depends(get_session)
+) -> bool:
+    """
+    Функция проверяет может ли юзер быть зарегистрирован
+    :param login: введенный логин (телефон или номер)
+    :param session: подключение к бд
+    :return: булевое значение, обозначающее может ли юзер быть зарегистрирован
+    """
     user = find_user(session, login)
     if user:
         raise HTTPException(status_code=401, detail='Пользователь с такими данными уже существует')
 
     return True
 
+
 @app.post('/account/signUp')
-async def signUpUser(data: dict,
-                     session: Session = Depends(get_session),
-                     role: str = Header(None, alias="X-User-Role")):
+async def sign_up(
+        data: dict,
+        session: Session = Depends(get_session),
+        role: str = Header(None, alias="X-User-Role")
+) -> dict[str, str]:
+    """
+    :param data: словарь с логином и паролем
+    :param session: подключение к бд
+    :param role: роль юзера (кандидат или компания)
+    :return: сообщение об успешной регистрации
+    """
     data_main = None
     data_info = None
     if role == 'candidate':
@@ -73,7 +113,8 @@ async def signUpUser(data: dict,
         data_main = Candidate(
             firstName=data['firstName'],
             lastName=data['lastName'],
-            patronymic=data.get('patronymic') or None, # get возвращает пустую строку, а мне надо null в бд (да, or выберет None, лол)
+            # get возвращает пустую строку, а мне надо null в бд (да, or выберет None, лол)
+            patronymic=data.get('patronymic') or None,
             phone=data['login'] if not login_is_mail else None,
             mail=data['login'] if login_is_mail else None,
             password=data['candidatePass']
@@ -100,9 +141,17 @@ async def signUpUser(data: dict,
 
 
 @app.post('/account/login')
-async def loginUser(data: dict,
-                    response: Response,
-                    session: Session = Depends(get_session)):
+async def login_user(
+        data: dict,
+        response: Response,
+        session: Session = Depends(get_session)
+) -> dict[str, str]:
+    """
+    :param data: логин и пароль юзера
+    :param response: ответ с сервера, для установки куки
+    :param session: подключение к бд
+    :return: сообщение об успешной регистрации
+    """
     login = data['login']
     password = data['pass']
 
@@ -132,33 +181,72 @@ async def loginUser(data: dict,
 
 
 @app.patch('/account/candidate/updateProfile')
-def candidate_update_profile(data: dict):
-    print(1)
+def candidate_update_profile(
+        data: dict,
+        session: Session = Depends(get_session)
+) -> None:
+    """
+    :param data: данные для обновления в бд
+    :param session: подключение к бд
+    """
+    if not data:
+        return
+
+    for table, changes in data.items():
+        table = string_tables[table]
+        record_id = changes['id']
+        data = session.query(table).filter(table.id == record_id).first()
+
+        update_data(session, data, changes)
 
 
 @app.get('/getRole')
-async def getRole(request: Request):
+async def get_role(
+        request: Request
+) -> str:
+    """
+    Возвращает из куки роль юзера
+    :param request: запрос от юзера
+    :return: роль (кандидат или компания)
+    """
     payload = get_payload(request)
     role = payload.model_extra['role']
     return role
 
 
 @app.get('/getUserId')
-async def getUserId(request: Request):
+async def get_user_id(
+        request: Request
+) -> str:
+    """
+    Возвращает из куки айди юзера
+    :param request: запрос от юзера
+    :return: айди юзера (из Candidate или Company)
+    """
     payload = get_payload(request)
     uid = payload.model_extra['uid']
     return uid
 
 
 @app.get('/allCandidates')
-async def getAllCandidates(session: Session = Depends(get_session)):
+async def get_all_candidate(
+        session: Session = Depends(get_session)
+) -> Sequence[Row[tuple[...]]]:
     candidates = session.query(Candidate).all()
     return candidates
 
 
 @app.get('/candidate/{candidate_id}', response_model=CandidateDataSchema)
-async def getCandidateData(candidate_id: int,
-                           session: Session = Depends(get_session)):
+async def get_candidate_data(
+        candidate_id: int,
+        session: Session = Depends(get_session)
+) -> Row[tuple[...]]:
+    """
+    Возвращает все данные о кандидате
+    :param candidate_id: айди кандидата
+    :param session: подключение к бд
+    :return: собранные данные о кандидате
+    """
     record = session.execute(
         CANDIDATE_DATA_STMT,
         {"candidate_id": candidate_id}
@@ -168,52 +256,64 @@ async def getCandidateData(candidate_id: int,
 
 
 @app.post('/sendResponse', dependencies=[Depends(security.access_token_required)])
-async def sendResponse(data: dict,
-                       request: Request,
-                       session: Session = Depends(get_session)):
+async def send_response(
+        data: dict,
+        request: Request,
+        session: Session = Depends(get_session)
+) -> dict[str, str]:
+    """
+    Записываем отклик/приглашение в таблицу Responses
+    :param data: входные данные (роль, сопроводительное письмо/приглашение, айдишники и тд)
+    :param request: запрос от юзера
+    :param session: подключение к бд
+    :return: сообщение об успехе
+    """
     payload = get_payload(request)
     res_mess = data['resMess']
     role = data['role']
-    dataDB = None
+    data_db = None
 
     if role == 'candidate':
         candidate_id = int(payload.model_extra['uid'])
         vacancy_id = int(data['vacancyId'])
 
-        dataDB = Responses(vacancy_id=vacancy_id,
-                           candidate_id=candidate_id,
-                           response_type=1,
-                           message=res_mess)
+        data_db = Responses(vacancy_id=vacancy_id,
+                            candidate_id=candidate_id,
+                            response_type=1,
+                            message=res_mess)
     elif role == 'company':
         company_id = int(payload.model_extra['uid'])
         candidate_id = int(data['candidateId'])
 
-        dataDB = Responses(company_id=company_id,
-                           candidate_id=candidate_id,
-                           response_type=2,
-                           message=res_mess)
+        data_db = Responses(company_id=company_id,
+                            candidate_id=candidate_id,
+                            response_type=2,
+                            message=res_mess)
 
-    commit_data(session, dataDB)
+    commit_data(session, data_db)
 
     response_name = 'Резюме' if role == 'candidate' else 'Приглашение'
     return {'message': f'{response_name} успешно отправлено'}
 
 
 @app.get('/isResponseAnswered')
-async def isResponseAnswered(request: Request, vacancy_id: int = Query(None),
-                             candidate_id: int = Query(None), response_type: int = Query(None),
-                             session: Session = Depends(get_session)) -> None | bool:
+async def is_response_answered(
+        request: Request, vacancy_id: int = Query(None),
+        candidate_id: int = Query(None), response_type: int = Query(None),
+        session: Session = Depends(get_session)
+) -> None | bool:
     """
-    Ручка смотрит на статут ответа (is_answered) в таблице Responses для обеих ролей
+    Возвращает статус ответа (из таблицы Responses) для соответствующего сообщения
     :param vacancy_id: айди вакансии
     :param candidate_id: айди кандидата
     :param response_type: тип запрос (1 - от соискателя, 2 - от компании)
-    :param request: реквест с запроса (Request)
-    :param session: подключение к бд (Session)
+    :param request: запрос от юзера
+    :param session: подключение к бд
     :return: None, 0 или 1
     """
     payload = get_payload(request)
     user_id = int(payload.model_extra['uid'])
+    stmt = None
 
     if response_type == 1:
         stmt = select(Responses.is_answered).where(
@@ -233,7 +333,15 @@ async def isResponseAnswered(request: Request, vacancy_id: int = Query(None),
 
 
 @app.exception_handler(MissingTokenError)
-async def missing_token_handler(request: Request, exc: MissingTokenError):
+async def missing_token_handler(
+        request: Request, exc: MissingTokenError
+) -> JSONResponse:
+    """
+    Обрабатывает ошибку авторизации
+    :param request: запрос от юзера
+    :param exc: ошибка
+    :return: сообщение со статусом ошибки
+    """
     return JSONResponse(
         status_code=401,
         content={"detail": "Требуется авторизация."}

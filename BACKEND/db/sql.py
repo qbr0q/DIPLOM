@@ -44,7 +44,7 @@ SELECT
     cd.patronymic,
     cd.phone,
     cd.mail,
-    cdi.id as CandidateInfoId,
+    cdi.id as candidateInfoId,
     cdi.birth_date,
     cdi.sex,
     cdi.about
