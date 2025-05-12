@@ -1,8 +1,10 @@
 import React, {useState, useEffect, useRef}  from 'react';
 import {BACKEND_URL} from '../../appContans'
 import {fetchData} from '../../Utils'
-import '../../../css/EditProfile/editCandidateProfile.css'
-import BasicInfoForm from './editProfileFormsCandidate/BasicInfoForm'
+import '../../../css/EditProfile/EditCandidateProfile.css'
+import BasicInfoForm from './editProfileFormsCandidate/basicInfoForm'
+import EducationForm from './editProfileFormsCandidate/educationForm'
+import ExperienceForm from './editProfileFormsCandidate/workExperience'
 
 const EditCandidateProfile = () => {
 
@@ -12,6 +14,8 @@ const EditCandidateProfile = () => {
 
     // инициализируем хранение объектов с грязными полями
     const baseInfoRef = useRef({});
+    const educationRef = useRef({});
+    const workExperienceRef = useRef({});
 
     useEffect(() => {
         fetchData('/getUserId', setCandidateId);
@@ -43,10 +47,14 @@ const EditCandidateProfile = () => {
 
     function saveChanges() {
         const baseInfo = getDirtyData(baseInfoRef.current);
+        educationRef.current.id = candidateData.candidateEducationId
+        workExperienceRef.current.id = candidateData.experience.candidateWorkExperienceId
 
         const entries = Object.entries({
             'Candidate': baseInfo.Candidate,
-            'CandidateInfo': baseInfo.CandidateInfo
+            'CandidateInfo': baseInfo.CandidateInfo,
+            'CandidateEducation': educationRef.current,
+            'CandidateWorkExperience': workExperienceRef.current
         });
         // отправляем на бек только объекты с изменениями
         const dataToSave = Object.fromEntries(
@@ -69,7 +77,7 @@ const EditCandidateProfile = () => {
 
         const byTable = {
             Candidate: {'id': Number(candidateId)},
-            CandidateInfo: {'id': Number(candidateData.candidateInfoId)}
+            CandidateInfo: {'id': Number(candidateData.candidateInfoId)},
         };
 
         for (let key in dirtyFields) {
@@ -95,15 +103,17 @@ const EditCandidateProfile = () => {
           </div>
 
           <div className="tab-content">
-            {activeTab === 'basic' && <BasicInfoForm candidateData={candidateData}
+            {activeTab === 'basic' && <BasicInfoForm candidateData={candidateData.main_data}
                                                      registerDirtyFields={baseInfoRef}/>}
-            {activeTab === 'education' && <div>Вкладка образования</div>}
-            {activeTab === 'experience' && <div>Вкладка опыта работы</div>}
+            {activeTab === 'education' && <EducationForm candidateData={candidateData}
+                                                     registerDirtyFields={educationRef}/>}
+            {activeTab === 'experience' && <ExperienceForm experienceData={candidateData.experience}
+                                                     registerDirtyFields={workExperienceRef}/>}
             {activeTab === 'skills' && <div>Вкладка навыков</div>}
             {activeTab === 'portfolio' && <div>Вкладка портфолио</div>}
           </div>
 
-          <button onClick={() => saveChanges()}>Сохранить</button>
+          <button className="btnSaveChanges" onClick={() => saveChanges()}>Сохранить</button>
      </div>
     );
   };

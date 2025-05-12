@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import '../../../../css/EditProfile/editProfileFormsCandidate/BasicInfoForm.css';
+import '../../../../css/EditProfile/EditForm.css';
 import {BACKEND_URL} from '../../../appContans'
 
 const BasicInfoForm = ({candidateData, registerDirtyFields}) => {
@@ -51,49 +51,49 @@ const BasicInfoForm = ({candidateData, registerDirtyFields}) => {
     }
 
     return (
-      <form className='BaseInfoForm' id="BaseInfoForm">
-        <h3 className="title">Основная информация</h3>
+      <form className='editForm'>
+        <h3 className="editTitle">Основная информация</h3>
 
-        <label class="BaseInfoLabel">Фамилия</label>
+        <label class="editLabel">Фамилия</label>
         <input
           type="text"
           name="lastName"
           placeholder="Фамилия"
-          className="BaseInfoInput"
+          className="editInput"
           value={formData.lastName}
           onChange={handleChange}
         />
-        <label class="BaseInfoLabel">Имя</label>
+        <label class="editLabel">Имя</label>
         <input
           type="text"
           name="firstName"
           placeholder="Имя"
-          className="BaseInfoInput"
+          className="editInput"
           value={formData.firstName}
           onChange={handleChange}
         />
-        <label class="BaseInfoLabel">Отчество</label>
+        <label class="editLabel">Отчество</label>
         <input
           type="text"
           name="patronymic"
           placeholder="Отчество"
           value={formData.patronymic}
-          className="BaseInfoInput"
+          className="editInput"
           onChange={handleChange}
         />
-        <label class="BaseInfoLabel">Дата рождения</label>
+        <label class="editLabel">Дата рождения</label>
         <input
           type="date"
           name="birth_date"
           placeholder="Дата рождения"
           value={formData.birth_date}
-          className="BaseInfoInput"
+          className="editInput"
           onChange={handleChange}
         />
-        <label class="BaseInfoLabel">Пол</label>
+        <label class="editLabel">Пол</label>
         <select
           name="sex"
-          className="BaseInfoInput"
+          className="editInput"
           defaultValue={formData.sex}
           onChange={handleChange}
         >
@@ -101,11 +101,11 @@ const BasicInfoForm = ({candidateData, registerDirtyFields}) => {
           <option value="male">Мужской</option>
           <option value="female">Женский</option>
         </select>
-        <label class="BaseInfoLabel">О себе</label>
+        <label class=".label">О себе</label>
         <textarea
           name="about"
           placeholder="О себе"
-          className="textarea"
+          className="editTextarea"
           value={formData.about}
           onChange={handleChange}
         />

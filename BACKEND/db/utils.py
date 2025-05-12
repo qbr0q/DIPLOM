@@ -1,11 +1,12 @@
-from db.models import Candidate, CandidateInfo
+from db.models import Candidate, CandidateInfo, CandidateEducation
 from sqlalchemy.orm import Session, DeclarativeBase
 from typing import Dict, Any
 
 
 string_tables = {
     'Candidate': Candidate,
-    'CandidateInfo': CandidateInfo
+    'CandidateInfo': CandidateInfo,
+    'CandidateEducation': CandidateEducation
 }
 
 
@@ -24,9 +25,9 @@ def commit_data(
     return data.id
 
 
-def update_data(
+def update_row(
         session: Session,
-        data: DeclarativeBase,
+        table_row: DeclarativeBase,
         values: Dict[str, Dict[str, Any]]
 ) -> None:
     """
@@ -37,6 +38,30 @@ def update_data(
     :return:
     """
     for key, value in values.items():
-        setattr(data, key, value)
+        setattr(table_row, key, value)
 
     session.commit()
+
+
+def insert_row(
+        session,
+        data
+):
+    session.add(data)
+    session.commit()
+
+
+def delete_row(
+        session,
+        table_row
+):
+    session.delete(table_row)
+    session.commit()
+
+
+def get_record(session, stmt, param: dict):
+    record = session.execute(
+        stmt,
+        {param['field']: param['value']}
+    )
+    return record

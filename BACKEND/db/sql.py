@@ -36,7 +36,7 @@ INNER JOIN Company cm on vc.company_id = cm.id
 WHERE vc.id = :vacancy_id
 """)
 
-CANDIDATE_DATA_STMT = text("""
+CANDIDATE_MAIN_DATA_STMT = text("""
 SELECT
     cd.id as candidateId,
     cd.lastName,
@@ -51,4 +51,27 @@ SELECT
 FROM Candidate as cd
 INNER JOIN CandidateInfo cdi on cd.id = cdi.candidate_id
 WHERE cd.id = :candidate_id
+""")
+
+CANDIDATE_EDUCATION_DATA_STMT = text("""
+SELECT
+    cde.id as candidateEducationId,
+    cde.institution,
+    cde.specialization,
+    cde.education_start_date,
+    cde.education_end_date
+FROM Candidate cd
+INNER JOIN CandidateEducation cde on cd.id = cde.candidate_id
+WHERE cd.id = :candidate_id
+""")
+
+CANDIDATE_EXPERIENCE_DATA_STMT = text("""
+SELECT
+    cwe.id, 
+    cwe.company_name,
+    cwe.position,
+    cwe.experience
+FROM Candidate cd
+INNER JOIN CandidateWorkExperience cwe on cd.id = cwe.candidate_id
+WHERE cd.id = 1
 """)

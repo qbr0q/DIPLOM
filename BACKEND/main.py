@@ -16,8 +16,7 @@ from config import (HOST, PORT, security,
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
-from db.utils import (commit_data, string_tables,
-                      update_data)
+from db.utils import *
 from utils import (hash_password, verify_password,
                    find_user, get_payload)
 
@@ -119,23 +118,20 @@ async def sign_up(
             mail=data['login'] if login_is_mail else None,
             password=data['candidatePass']
         )
+        data_main.password = hash_password(data_main.password)
+        commit_data(session, data_main)
+
+        candidate_id = data_main.id
+        data_info = CandidateInfo(candidate_id=candidate_id)
+        # data_education = CandidateEducation(candidate_id=candidate_id)
+        commit_data(session, data_info)
+        # commit_data(session, data_education)
     elif role == 'company':
         data_main = Company(
             name=data['companyName'],
             mail=data['login'],
             password=data['companyPass']
         )
-
-    data_main.password = hash_password(data_main.password)
-    commit_data(session, data_main)
-
-    if role == 'candidate':
-        candidate_id = data_main.id
-        data_info = CandidateInfo(candidate_id=candidate_id)
-    elif role == 'company':
-        pass
-
-    commit_data(session, data_info)
 
     return {'message': 'Успешная регистрация'}
 
@@ -191,13 +187,23 @@ def candidate_update_profile(
     """
     if not data:
         return
+    table_row = None
 
-    for table, changes in data.items():
-        table = string_tables[table]
-        record_id = changes['id']
-        data = session.query(table).filter(table.id == record_id).first()
-
-        update_data(session, data, changes)
+    # for table, changes in data.items():
+    #     table = string_tables[table]
+    #     if type(changes) == dict:
+    #         if changes.get('_new'):
+    #             data_to_insert = table(**changes)
+    #             insert_row(session, data_to_insert)
+    #         elif changes.get('_deleted'):
+    #             data_to_delete = table.
+    #         record_id = changes['id']
+    #         table_row = session.query(table).filter(table.id == record_id).first()
+    #     elif type(changes) == list:
+    #         for i in changes:
+    #             pass
+    #
+    #     update_data(session, table_row, changes)
 
 
 @app.get('/getRole')
@@ -228,7 +234,7 @@ async def get_user_id(
     return uid
 
 
-@app.get('/allCandidates')
+@app.get('/allCandidates', response_model=list[CandidateCardSchema])
 async def get_all_candidate(
         session: Session = Depends(get_session)
 ) -> Sequence[Row[tuple[...]]]:
@@ -240,20 +246,34 @@ async def get_all_candidate(
 async def get_candidate_data(
         candidate_id: int,
         session: Session = Depends(get_session)
-) -> Row[tuple[...]]:
+):
     """
     Возвращает все данные о кандидате
     :param candidate_id: айди кандидата
     :param session: подключение к бд
     :return: собранные данные о кандидате
     """
-    record = session.execute(
-        CANDIDATE_DATA_STMT,
-        {"candidate_id": candidate_id}
-    )
-    candidate_data = record.fetchone()
-    return candidate_data
+    param = {'field': 'candidate_id', 'value': candidate_id}
 
+    # основная информация
+    record = get_record(session, CANDIDATE_MAIN_DATA_STMT, param)
+    candidate_main_data = record.fetchone()
+
+    # собираем инфу об учебе
+    record = get_record(session, CANDIDATE_EDUCATION_DATA_STMT, param)
+    candidate_education_data = record.fetchall()
+
+    # собираем инфу об опыте работы
+    record = get_record(session, CANDIDATE_EXPERIENCE_DATA_STMT, param)
+    candidate_work_experience = record.fetchall()
+
+    candidate_data = {
+        'main_data': candidate_main_data,
+        'education': candidate_education_data,
+        'experience': candidate_work_experience
+    }
+
+    return candidate_data
 
 @app.post('/sendResponse', dependencies=[Depends(security.access_token_required)])
 async def send_response(

@@ -33,6 +33,23 @@ class CandidateInfo(SQLModel, table=True):
     candidate_id: int = Field(foreign_key='candidate.id')
 
 
+class CandidateEducation(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    institution: str = Field(default=None, nullable=True)
+    specialization: str = Field(default=None, nullable=True)
+    education_start_date: date = Field(default=None, nullable=True)
+    education_end_date: date = Field(default=None, nullable=True)
+    candidate_id: int = Field(foreign_key='candidate.id')
+
+
+class CandidateWorkExperience(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    company_name: str = Field(default=None, nullable=True)
+    position: str = Field(default=None, nullable=True)
+    experience: int = Field(default=None, nullable=True)
+    candidate_id: int = Field(foreign_key='candidate.id')
+
+
 class Vacancy(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     createDate: datetime
