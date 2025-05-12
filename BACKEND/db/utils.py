@@ -1,4 +1,5 @@
-from db.models import Candidate, CandidateInfo, CandidateEducation
+from db.models import (Candidate, CandidateInfo, CandidateEducation,
+                       CandidateWorkExperience)
 from sqlalchemy.orm import Session, DeclarativeBase
 from typing import Dict, Any
 
@@ -6,7 +7,8 @@ from typing import Dict, Any
 string_tables = {
     'Candidate': Candidate,
     'CandidateInfo': CandidateInfo,
-    'CandidateEducation': CandidateEducation
+    'CandidateEducation': CandidateEducation,
+    'CandidateWorkExperience': CandidateWorkExperience
 }
 
 
@@ -53,9 +55,9 @@ def insert_row(
 
 def delete_row(
         session,
-        table_row
+        row_to_del
 ):
-    session.delete(table_row)
+    session.delete(row_to_del)
     session.commit()
 
 

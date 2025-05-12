@@ -36,7 +36,7 @@ const EditCandidateProfile = () => {
       { key: 'education', label: 'Образование' },
       { key: 'experience', label: 'Опыт работы' },
       { key: 'skills', label: 'Навыки' },
-      { key: 'portfolio', label: 'Портфолио' },
+      // { key: 'portfolio', label: 'Портфолио' },//
     ];
 
     // фильтруем пустые объекты грязных полей или объекты, где только айди
@@ -48,7 +48,6 @@ const EditCandidateProfile = () => {
     function saveChanges() {
         const baseInfo = getDirtyData(baseInfoRef.current);
         educationRef.current.id = candidateData.candidateEducationId
-        workExperienceRef.current.id = candidateData.experience.candidateWorkExperienceId
 
         const entries = Object.entries({
             'Candidate': baseInfo.Candidate,
@@ -61,7 +60,7 @@ const EditCandidateProfile = () => {
             entries.filter(([_, value]) => !isEmptyExceptId(value))
         );
 
-        fetch(BACKEND_URL + '/account/candidate/updateProfile', {
+        fetch(BACKEND_URL + '/account/updateProfile', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

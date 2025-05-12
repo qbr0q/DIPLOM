@@ -6,6 +6,7 @@ from typing import Any, Type
 from fastapi import Request
 
 from db.models import Company, Candidate
+from db.utils import (insert_row, delete_row, update_row)
 from config import config
 
 
@@ -64,3 +65,22 @@ def get_payload(
     token = request.cookies.get("access_token")
     payload = TokenPayload.decode(token, config.JWT_SECRET_KEY)
     return payload
+
+
+def update_profile_data(
+        session,
+        table,
+        changes,
+        record_id,
+        candidate_id=None
+):
+    if changes.get('_new'):
+        data_to_insert = table(candidate_id=candidate_id, **changes)
+        insert_row(session, data_to_insert)
+    elif changes.get('_deleted'):
+        row_to_del = session.query(table).filter_by(id=record_id).first()
+        delete_row(session, row_to_del)
+    else:
+        table_row = session.query(table).filter_by(id=record_id).first()
+        update_row(session, table_row, changes)
+

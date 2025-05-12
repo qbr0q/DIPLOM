@@ -16,9 +16,9 @@ from config import (HOST, PORT, security,
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
-from db.utils import *
-from utils import (hash_password, verify_password,
-                   find_user, get_payload)
+from db.utils import (commit_data, string_tables, get_record)
+from utils import (hash_password, verify_password, find_user,
+                   get_payload, update_profile_data)
 
 
 app = FastAPI()
@@ -176,9 +176,10 @@ async def login_user(
     return {'message': 'Успешный вход'}
 
 
-@app.patch('/account/candidate/updateProfile')
-def candidate_update_profile(
+@app.patch('/account/updateProfile')
+async def update_profile(
         data: dict,
+        request: Request,
         session: Session = Depends(get_session)
 ) -> None:
     """
@@ -189,21 +190,20 @@ def candidate_update_profile(
         return
     table_row = None
 
-    # for table, changes in data.items():
-    #     table = string_tables[table]
-    #     if type(changes) == dict:
-    #         if changes.get('_new'):
-    #             data_to_insert = table(**changes)
-    #             insert_row(session, data_to_insert)
-    #         elif changes.get('_deleted'):
-    #             data_to_delete = table.
-    #         record_id = changes['id']
-    #         table_row = session.query(table).filter(table.id == record_id).first()
-    #     elif type(changes) == list:
-    #         for i in changes:
-    #             pass
-    #
-    #     update_data(session, table_row, changes)
+    for table, changes in data.items():
+        table = string_tables[table]
+        if type(changes) == dict:
+            record_id = changes['id']
+            update_profile(session, table, changes, record_id)
+        elif type(changes) == list:
+            for update in changes:
+                record_id = update.get('id')
+                if update.get('_new'):
+                    candidate_id = await get_user_id(request)
+                    update_profile_data(session, table, update,
+                                        record_id, candidate_id)
+                else:
+                    update_profile_data(session, table, update, record_id)
 
 
 @app.get('/getRole')
