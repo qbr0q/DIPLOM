@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import '../../../../css/EditProfile/EditForm.css';
 import {BACKEND_URL} from '../../../appContans'
 
-const EducationForm = ({candidateData, registerDirtyFields}) => {
+const EducationForm = ({educationData, registerDirtyFields}) => {
 
     const [dirtyFields, setDirtyFields] = useState({});
     // делаем копию данных из бд для корректной отрисовки данных при их изменении
-    const [formData, setFormData] = useState({...candidateData});
+    const [formData, setFormData] = useState({...educationData});
 
     useEffect(() => {
         // при каждом изменении списка грязных полей - устанавливаем объект с ними для всей вкладки
@@ -20,7 +20,7 @@ const EducationForm = ({candidateData, registerDirtyFields}) => {
         formData[name] = value
 
         // проверяем соотвествует ли значение изначальному из бд
-        if (value !== candidateData[name]) {
+        if (value !== educationData[name]) {
             // если нет, то добавляем поле как грязное
             setDirtyFields(prev => ({ ...prev, [name]: value }));
         } else {

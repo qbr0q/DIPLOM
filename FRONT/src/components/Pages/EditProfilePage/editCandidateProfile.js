@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useRef}  from 'react';
 import {BACKEND_URL} from '../../appContans'
-import {fetchData} from '../../Utils'
+import {fetchData, showNotification} from '../../Utils'
 import '../../../css/EditProfile/EditCandidateProfile.css'
 import BasicInfoForm from './editProfileFormsCandidate/basicInfoForm'
 import EducationForm from './editProfileFormsCandidate/educationForm'
-import ExperienceForm from './editProfileFormsCandidate/workExperience'
+import ExperienceForm from './editProfileFormsCandidate/workExperienceForm'
+import SkillsForm from './editProfileFormsCandidate/skillsForm'
 
 const EditCandidateProfile = () => {
 
@@ -16,6 +17,7 @@ const EditCandidateProfile = () => {
     const baseInfoRef = useRef({});
     const educationRef = useRef({});
     const workExperienceRef = useRef({});
+    const skillsRef = useRef({});
 
     useEffect(() => {
         fetchData('/getUserId', setCandidateId);
@@ -35,8 +37,7 @@ const EditCandidateProfile = () => {
       { key: 'basic', label: 'Основная информация' },
       { key: 'education', label: 'Образование' },
       { key: 'experience', label: 'Опыт работы' },
-      { key: 'skills', label: 'Навыки' },
-      // { key: 'portfolio', label: 'Портфолио' },//
+      { key: 'skills', label: 'Навыки' }
     ];
 
     // фильтруем пустые объекты грязных полей или объекты, где только айди
@@ -45,29 +46,40 @@ const EditCandidateProfile = () => {
         return keys.length === 0 || (keys.length === 1 && keys[0] === 'id');
     }
 
-    function saveChanges() {
+    async function saveChanges() {
         const baseInfo = getDirtyData(baseInfoRef.current);
-        educationRef.current.id = candidateData.candidateEducationId
+        educationRef.current.id = candidateData.education.id
 
         const entries = Object.entries({
             'Candidate': baseInfo.Candidate,
             'CandidateInfo': baseInfo.CandidateInfo,
             'CandidateEducation': educationRef.current,
-            'CandidateWorkExperience': workExperienceRef.current
+            'CandidateWorkExperience': workExperienceRef.current,
+            'CandidateSkills': skillsRef.current
         });
         // отправляем на бек только объекты с изменениями
         const dataToSave = Object.fromEntries(
             entries.filter(([_, value]) => !isEmptyExceptId(value))
         );
+        if (Object.keys(dataToSave).length === 0) {
+            showNotification('Внимание!', 'Внесите изменения', 'warning')
+            return null
+        }
 
-        fetch(BACKEND_URL + '/account/updateProfile', {
+        const response = await fetch(BACKEND_URL + '/account/updateProfile', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
             body: JSON.stringify(dataToSave),
-        });
+        })
+        const jsonData = await response.json();
+        if (response.ok) {
+            showNotification('Успех', jsonData.message, 'success')
+        } else {
+            showNotification('Ошибка!', jsonData.detail, 'error')
+        }
     }
 
     const getDirtyData = (dirtyFields) => {
@@ -76,7 +88,7 @@ const EditCandidateProfile = () => {
 
         const byTable = {
             Candidate: {'id': Number(candidateId)},
-            CandidateInfo: {'id': Number(candidateData.candidateInfoId)},
+            CandidateInfo: {'id': Number(candidateData.main_data.candidateInfoId)},
         };
 
         for (let key in dirtyFields) {
@@ -102,14 +114,14 @@ const EditCandidateProfile = () => {
           </div>
 
           <div className="tab-content">
-            {activeTab === 'basic' && <BasicInfoForm candidateData={candidateData.main_data}
+            {activeTab === 'basic' && <BasicInfoForm mainData={candidateData.main_data}
                                                      registerDirtyFields={baseInfoRef}/>}
-            {activeTab === 'education' && <EducationForm candidateData={candidateData}
+            {activeTab === 'education' && <EducationForm educationData={candidateData.education}
                                                      registerDirtyFields={educationRef}/>}
             {activeTab === 'experience' && <ExperienceForm experienceData={candidateData.experience}
                                                      registerDirtyFields={workExperienceRef}/>}
-            {activeTab === 'skills' && <div>Вкладка навыков</div>}
-            {activeTab === 'portfolio' && <div>Вкладка портфолио</div>}
+            {activeTab === 'skills' && <SkillsForm skillsData={candidateData.skills}
+                                                     registerDirtyFields={skillsRef}/>}
           </div>
 
           <button className="btnSaveChanges" onClick={() => saveChanges()}>Сохранить</button>

@@ -1,5 +1,4 @@
 import React, {useState, useEffect}  from 'react';
-import {BACKEND_URL} from '../../appContans'
 
 const CompanyProfile = () => {
 
@@ -7,6 +6,9 @@ const CompanyProfile = () => {
     return (
       <>
         <p>профиль компании</p>
+        <button onClick={() => window.location.href = '/account/editProfile'} className='btnEditProfile'>
+            Редактировать профиль
+        </button>
       </>
     );
   };

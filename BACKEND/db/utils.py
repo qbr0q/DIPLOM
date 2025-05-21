@@ -1,5 +1,5 @@
 from db.models import (Candidate, CandidateInfo, CandidateEducation,
-                       CandidateWorkExperience)
+                       CandidateWorkExperience, CandidateSkills)
 from sqlalchemy.orm import Session, DeclarativeBase
 from typing import Dict, Any
 
@@ -8,7 +8,8 @@ string_tables = {
     'Candidate': Candidate,
     'CandidateInfo': CandidateInfo,
     'CandidateEducation': CandidateEducation,
-    'CandidateWorkExperience': CandidateWorkExperience
+    'CandidateWorkExperience': CandidateWorkExperience,
+    'CandidateSkills': CandidateSkills
 }
 
 

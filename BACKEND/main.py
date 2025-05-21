@@ -16,7 +16,7 @@ from config import (HOST, PORT, security,
 from db.models import *
 from db.vildationSchemas import *
 from db.sql import *
-from db.utils import (commit_data, string_tables, get_record)
+from db.utils import (commit_data, string_tables, get_record, update_row)
 from utils import (hash_password, verify_password, find_user,
                    get_payload, update_profile_data)
 
@@ -123,9 +123,9 @@ async def sign_up(
 
         candidate_id = data_main.id
         data_info = CandidateInfo(candidate_id=candidate_id)
-        # data_education = CandidateEducation(candidate_id=candidate_id)
+        data_education = CandidateEducation(candidate_id=candidate_id)
         commit_data(session, data_info)
-        # commit_data(session, data_education)
+        commit_data(session, data_education)
     elif role == 'company':
         data_main = Company(
             name=data['companyName'],
@@ -170,7 +170,7 @@ async def login_user(
     response.set_cookie(
         key=config.JWT_ACCESS_COOKIE_NAME,
         value=token,
-        expires=60 * 60
+        expires=60 * 60 * 3
     )
 
     return {'message': 'Успешный вход'}
@@ -181,7 +181,7 @@ async def update_profile(
         data: dict,
         request: Request,
         session: Session = Depends(get_session)
-) -> None:
+) -> dict[str, str]:
     """
     :param data: данные для обновления в бд
     :param session: подключение к бд
@@ -194,7 +194,7 @@ async def update_profile(
         table = string_tables[table]
         if type(changes) == dict:
             record_id = changes['id']
-            update_profile(session, table, changes, record_id)
+            update_profile_data(session, table, changes, record_id)
         elif type(changes) == list:
             for update in changes:
                 record_id = update.get('id')
@@ -204,6 +204,7 @@ async def update_profile(
                                         record_id, candidate_id)
                 else:
                     update_profile_data(session, table, update, record_id)
+    return {'message': 'Данные успешно изменены!'}
 
 
 @app.get('/getRole')
@@ -261,16 +262,21 @@ async def get_candidate_data(
 
     # собираем инфу об учебе
     record = get_record(session, CANDIDATE_EDUCATION_DATA_STMT, param)
-    candidate_education_data = record.fetchall()
+    candidate_education_data = record.fetchone()
 
     # собираем инфу об опыте работы
     record = get_record(session, CANDIDATE_EXPERIENCE_DATA_STMT, param)
     candidate_work_experience = record.fetchall()
 
+    # собираем инфу об опыте работы
+    record = get_record(session, CANDIDATE_SKILLS_DATA_STMT, param)
+    candidate_skills = record.fetchall()
+
     candidate_data = {
         'main_data': candidate_main_data,
         'education': candidate_education_data,
-        'experience': candidate_work_experience
+        'experience': candidate_work_experience,
+        'skills': candidate_skills
     }
 
     return candidate_data
